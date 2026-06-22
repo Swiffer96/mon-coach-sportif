@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="fr"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Mon Coach Sportif - Thibaud&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="stylesheet" href="style.css"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.jsdelivr.net/npm/chart.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.2.0"&gt;&lt;/script&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;header&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;💪 Mon Coach Sportif&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Programme Hypertrophie - Thibaud (68kg)&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="nav-tabs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="nav-tab active" onclick="showTab('accueil')"&gt;Accueil&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="nav-tab" onclick="showTab('programme')"&gt;Programme&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="nav-tab" onclick="showTab('suivi')"&gt;Suivi&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="nav-tab" onclick="showTab('defis')"&gt;Défis&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="nav-tab" onclick="showTab('conseils')"&gt;Conseils&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Onglet Accueil --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="accueil" class="tab-content active"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;📅 Cette Semaine&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;Prochaine séance: &lt;strong id="next-session"&gt;Lundi - Full Body&lt;/strong&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;Objectif: &lt;strong&gt;Prise de masse (+2kg/3mois)&lt;/strong&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="progress-container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3&gt;Progression Récente&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;canvas id="progressionChart" width="400" height="200"&gt;&lt;/canvas&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;🔥 Dernières Performances&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;ul class="exercise-list" id="last-performances"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Les performances seront ajoutées dynamiquement par JavaScript --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Onglet Programme --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="programme" class="tab-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;📆 Programme Hebdomadaire&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="week-program"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Les séances seront ajoutées dynamiquement par JavaScript --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Onglet Suivi --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="suivi" class="tab-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;📊 Historique des Performances&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="history-container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- L'historique sera ajouté dynamiquement par JavaScript --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-warning" onclick="exportToCSV()"&gt;📥 Exporter en CSV&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Onglet Défis --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="defis" class="tab-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;🎯 Défis Hebdomadaires&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="current-challenge"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3&gt;Défi en cours : &lt;span id="challenge-text"&gt;Chargement...&lt;/span&gt;&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Progression : &lt;span id="challenge-progress"&gt;0%&lt;/span&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="progress-bar"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div id="challenge-bar" class="progress"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="btn" onclick="startChallenge()"&gt;🚀 Commencer le défi&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="btn btn-success" onclick="completeChallenge()"&gt;✅ Terminer le défi&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Onglet Conseils --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="conseils" class="tab-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;💡 Conseils Personnalisés&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="tips-container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="tips"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p&gt;&lt;strong&gt;🔥 Pour tes tractions :&lt;/strong&gt; Essaie de descendre lentement (3 secondes) pour améliorer ta mobilité et ta force en position basse.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="tips"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p&gt;&lt;strong&gt;💪 Pour le développé couché :&lt;/strong&gt; Ton record est à 60kg. Essaie 4x6 à 62.5kg la prochaine fois pour progresser en force.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="tips"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p&gt;&lt;strong&gt;🍗 Nutrition :&lt;/strong&gt; Tu prends déjà 22g de protéines avec ton shaker. Ajoute un yaourt grec ou des œufs pour atteindre 100-120g/jour.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="tips"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;p&gt;&lt;strong&gt;🛌 Récupération :&lt;/strong&gt; Dors au moins 7h/nuit pour optimiser ta prise de masse.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- Minuteur --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="timer-modal" class="modal"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="modal-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2&gt;⏱️ Minuteur&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="timer-display"&gt;1:30&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="timer-controls"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;input type="number" id="timer-minutes" value="1" min="0"&gt; min</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;input type="number" id="timer-seconds" value="30" min="0" max="59"&gt; sec</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn" onclick="startTimer()"&gt;Démarrer&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn" onclick="stopTimer()"&gt;Arrêter&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn" onclick="resetTimer()"&gt;Réinitialiser&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button class="btn" onclick="closeTimer()"&gt;Fermer&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="script.js"&gt;&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>

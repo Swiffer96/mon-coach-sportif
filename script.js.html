@@ -1,0 +1,390 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">// Données initiales</p>
+<p class="p1">let sessions = JSON.parse(localStorage.getItem('sessions')) || {};</p>
+<p class="p1">let records = JSON.parse(localStorage.getItem('records')) || {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'Squat': 70,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'Développé couché': 60,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'Tractions': 6,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'Leg Press': 112,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>'Peck Deck': 66</p>
+<p class="p1">};</p>
+<p class="p1">let currentChallenge = JSON.parse(localStorage.getItem('currentChallenge')) || null;</p>
+<p class="p1">let challenges = [</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{ id: 1, name: "10 tractions complètes en 30 jours", progress: 0, target: 10 },</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{ id: 2, name: "Squat à 80kg en 4 semaines", progress: 0, target: 80 },</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{ id: 3, name: "50kg au développé couché en 1 mois", progress: 0, target: 50 },</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{ id: 4, name: "100 squats en une semaine", progress: 0, target: 100 },</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{ id: 5, name: "3 séances de gainage par semaine pendant 1 mois", progress: 0, target: 12 }</p>
+<p class="p1">];</p>
+<p class="p2"><br></p>
+<p class="p1">// Programme des séances</p>
+<p class="p1">const weeklyProgram = {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Lundi": {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>name: "Full Body",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>exercises: [</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Squat", type: "Jambes", sets: "4x8-12", weight: 70 },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Développé couché", type: "Push", sets: "4x8-12", weight: 60 },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Tractions", type: "Pull", sets: "3x6-10", weight: null },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Leg Press", type: "Jambes", sets: "3x8-12", weight: 112 },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Peck Deck", type: "Push", sets: "3x8-12", weight: 66 }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>]</p>
+<p class="p1"><span class="Apple-converted-space">    </span>},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Mercredi": {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>name: "Split Haut (Push/Pull)",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>exercises: [</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Développé incliné", type: "Push", sets: "4x8-12", weight: null },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Rowing barre", type: "Pull", sets: "4x8-12", weight: null },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Élévations latérales", type: "Épaules", sets: "4x12-15", weight: null },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Curl biceps", type: "Pull", sets: "3x10-12", weight: null },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Dips", type: "Push", sets: "3x8-12", weight: null }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>]</p>
+<p class="p1"><span class="Apple-converted-space">    </span>},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Vendredi": {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>name: "Split Bas + Abdos",</p>
+<p class="p1"><span class="Apple-converted-space">        </span>exercises: [</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Soulevé de terre", type: "Jambes", sets: "4x6-8", weight: null },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Fentes marchées", type: "Jambes", sets: "3x10/jambe", weight: null },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Leg Curl", type: "Jambes", sets: "3x12-15", weight: null },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Mollets", type: "Jambes", sets: "4x15-20", weight: null },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>{ name: "Crunchs", type: "Abdos", sets: "3x15-20", weight: null }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>]</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">// Liste complète des exercices classés par type</p>
+<p class="p1">const allExercises = {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Push": ["Développé couché", "Développé incliné", "Dips", "Peck Deck", "Pompes", "Écarté haltères"],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Pull": ["Tractions", "Rowing barre", "Tirage horizontal", "Curl biceps", "Shrugs"],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Jambes": ["Squat", "Leg Press", "Fentes marchées", "Soulevé de terre", "Leg Curl", "Mollets"],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Épaules": ["Élévations latérales", "Développé militaire", "Face pull"],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Abdos": ["Crunchs", "Gainage", "Relevés de jambes", "Planche"]</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">// Initialisation</p>
+<p class="p1">document.addEventListener('DOMContentLoaded', function() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>updateRecords();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>updateHistory();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>updateWeekProgram();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>loadChallenge();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>renderCharts();</p>
+<p class="p1">});</p>
+<p class="p2"><br></p>
+<p class="p1">// Afficher un onglet</p>
+<p class="p1">function showTab(tabName) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.querySelectorAll('.tab-content').forEach(tab =&gt; tab.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.querySelectorAll('.nav-tab').forEach(tab =&gt; tab.classList.remove('active'));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById(tabName).classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>event.target.classList.add('active');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (tabName === 'suivi') updateHistory();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (tabName === 'programme') updateWeekProgram();</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// Mettre à jour les records</p>
+<p class="p1">function updateRecords() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const recordsContainer = document.getElementById('last-performances');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>recordsContainer.innerHTML = '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>for (const [exercise, weight] of Object.entries(records)) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const lastSession = Object.values(sessions).find(session =&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>session.exercises &amp;&amp; session.exercises[exercise]</p>
+<p class="p1"><span class="Apple-converted-space">        </span>);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const weightDisplay = lastSession &amp;&amp; lastSession.exercises[exercise] &amp;&amp; lastSession.exercises[exercise].weight</p>
+<p class="p1"><span class="Apple-converted-space">            </span>? `${lastSession.exercises[exercise].weight}kg x ${lastSession.exercises[exercise].reps || 'N/A'} reps`</p>
+<p class="p1"><span class="Apple-converted-space">            </span>: 'Aucune donnée';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>recordsContainer.innerHTML += `</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;li class="exercise-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="exercise-info"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3&gt;${exercise}&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Dernière séance: ${weightDisplay}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="record"&gt;Record: ${weight}kg&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// Mettre à jour le programme hebdomadaire</p>
+<p class="p1">function updateWeekProgram() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const weekProgramContainer = document.getElementById('week-program');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>weekProgramContainer.innerHTML = '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>for (const [day, session] of Object.entries(weeklyProgram)) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>weekProgramContainer.innerHTML += `</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card" style="margin-top: 10px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h3&gt;🔹 ${day}: ${session.name}&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;ul class="exercise-list" id="exercises-${day}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>${session.exercises.map(exercise =&gt; `</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li class="exercise-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="exercise-info"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h3&gt;${exercise.name}&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p&gt;${exercise.sets} | Poids conseillé: ${exercise.weight || 'N/A'}kg&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="exercise-inputs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="number" placeholder="Poids (kg)" data-day="${day}" data-exercise="${exercise.name}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="number" placeholder="Reps" data-day="${day}" data-exercise="${exercise.name}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="number" placeholder="RPE" data-day="${day}" data-exercise="${exercise.name}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="checkbox-container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;input type="checkbox" id="${day}-${exercise.name.replace(/\s+/g, '-')}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>`).join('')}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="notes"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label for="notes-${day}"&gt;Notes:&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;textarea id="notes-${day}" rows="2"&gt;&lt;/textarea&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn btn-success" onclick="saveSession('${day}')"&gt;💾 Enregistrer la séance&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn" onclick="startSession('${day}')"&gt;⏱️ Commencer la séance&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// Enregistrer une séance</p>
+<p class="p1">function saveSession(day) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const exercises = {};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const inputs = document.querySelectorAll(`[data-day="${day}"]`);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const notes = document.getElementById(`notes-${day}`).value;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>inputs.forEach(input =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const exercise = input.dataset.exercise;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const type = input.placeholder.includes('Poids') ? 'weight' :</p>
+<p class="p1"><span class="Apple-converted-space">                     </span>input.placeholder.includes('Reps') ? 'reps' : 'rpe';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!exercises[exercise]) exercises[exercise] = { weight: null, reps: null, rpe: null };</p>
+<p class="p1"><span class="Apple-converted-space">        </span>exercises[exercise][type] = input.value;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>sessions[day] = {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>date: new Date().toISOString().split('T')[0],</p>
+<p class="p1"><span class="Apple-converted-space">        </span>time: new Date().toLocaleTimeString(),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>exercises: exercises,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>notes: notes</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>localStorage.setItem('sessions', JSON.stringify(sessions));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Mettre à jour les records</p>
+<p class="p1"><span class="Apple-converted-space">    </span>for (const [exercise, data] of Object.entries(exercises)) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (data.weight &amp;&amp; !isNaN(data.weight)) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const weight = parseFloat(data.weight);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!records[exercise] || weight &gt; records[exercise]) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>records[exercise] = weight;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>localStorage.setItem('records', JSON.stringify(records));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>updateRecords();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>updateHistory();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>renderCharts();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>alert(`Séance du ${day} enregistrée avec succès !`);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// Commencer une séance (enregistre l'heure de début)</p>
+<p class="p1">function startSession(day) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!sessions[day]) sessions[day] = {};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>sessions[day].startTime = new Date().toISOString();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>localStorage.setItem('sessions', JSON.stringify(sessions));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>alert(`Séance du ${day} commencée à ${new Date().toLocaleTimeString()}`);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// Mettre à jour l'historique</p>
+<p class="p1">function updateHistory() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const historyContainer = document.getElementById('history-container');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (Object.keys(sessions).length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>historyContainer.innerHTML = '&lt;p style="text-align: center; color: #aaa;"&gt;Aucune séance enregistrée.&lt;/p&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>historyContainer.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>for (const [day, session] of Object.entries(sessions)) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>historyContainer.innerHTML += `</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card" style="margin-bottom: 10px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h3&gt;${day} - ${session.date} ${session.time ? `à ${session.time}` : ''}&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;&lt;strong&gt;Notes:&lt;/strong&gt; ${session.notes || 'Aucune note'}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;ul class="exercise-list"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>${Object.entries(session.exercises).map(([exercise, data]) =&gt; `</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li class="exercise-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="exercise-info"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;h3&gt;${exercise}&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;p&gt;Poids: ${data.weight || 'N/A'}kg | Reps: ${data.reps || 'N/A'} | RPE: ${data.rpe || 'N/A'}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>`).join('')}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// Gestion des défis</p>
+<p class="p1">function loadChallenge() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!currentChallenge) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Sélectionner un défi aléatoire</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const randomIndex = Math.floor(Math.random() * challenges.length);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>currentChallenge = challenges[randomIndex];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>currentChallenge.startDate = new Date().toISOString();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>currentChallenge.progress = 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>localStorage.setItem('currentChallenge', JSON.stringify(currentChallenge));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('challenge-text').textContent = currentChallenge.name;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('challenge-progress').textContent = `${Math.round((currentChallenge.progress / currentChallenge.target) * 100)}%`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('challenge-bar').style.width = `${(currentChallenge.progress / currentChallenge.target) * 100}%`;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function startChallenge() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!currentChallenge) loadChallenge();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>alert(`Défi "${currentChallenge.name}" commencé !`);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function completeChallenge() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (currentChallenge.progress &gt;= currentChallenge.target) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>alert(`Félicitations ! Tu as terminé le défi "${currentChallenge.name}" !`);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>currentChallenge = null;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>localStorage.removeItem('currentChallenge');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>loadChallenge();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>alert(`Tu as progressé à ${Math.round((currentChallenge.progress / currentChallenge.target) * 100)}%. Continue !`);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// Minuteur</p>
+<p class="p1">let timer;</p>
+<p class="p1">let timeLeft = 90; // 1min30 par défaut</p>
+<p class="p2"><br></p>
+<p class="p1">function startTimer() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const minutes = parseInt(document.getElementById('timer-minutes').value) || 1;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const seconds = parseInt(document.getElementById('timer-seconds').value) || 30;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>timeLeft = minutes * 60 + seconds;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>timer = setInterval(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (timeLeft &lt;= 0) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>clearInterval(timer);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('timer-display').textContent = "Temps écoulé !";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>alert("Temps de repos terminé !");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>timeLeft--;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const mins = Math.floor(timeLeft / 60);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const secs = timeLeft % 60;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('timer-display').textContent = `${mins}:${secs &lt; 10 ? '0' : ''}${secs}`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}, 1000);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function stopTimer() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>clearInterval(timer);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function resetTimer() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>clearInterval(timer);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const minutes = parseInt(document.getElementById('timer-minutes').value) || 1;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const seconds = parseInt(document.getElementById('timer-seconds').value) || 30;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>timeLeft = minutes * 60 + seconds;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('timer-display').textContent = `${minutes}:${seconds &lt; 10 ? '0' : ''}${seconds}`;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function closeTimer() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('timer-modal').style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>resetTimer();</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// Graphiques</p>
+<p class="p1">function renderCharts() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const ctx = document.getElementById('progressionChart').getContext('2d');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Exemple avec des données fictives (à remplacer par tes vraies données)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const labels = Object.keys(sessions).slice(-5); // Dernières 5 séances</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const data = labels.map(day =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const session = sessions[day];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (session &amp;&amp; session.exercises &amp;&amp; session.exercises['Squat']) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return session.exercises['Squat'].weight || 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (window.progressionChart) window.progressionChart.destroy();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.progressionChart = new Chart(ctx, {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>type: 'line',</p>
+<p class="p1"><span class="Apple-converted-space">        </span>data: {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>labels: labels,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>datasets: [{</p>
+<p class="p1"><span class="Apple-converted-space">                </span>label: 'Poids au Squat (kg)',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>data: data,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>borderColor: 'rgba(75, 192, 192, 1)',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>backgroundColor: 'rgba(75, 192, 192, 0.2)',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tension: 0.1</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}]</p>
+<p class="p1"><span class="Apple-converted-space">        </span>},</p>
+<p class="p1"><span class="Apple-converted-space">        </span>options: {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>responsive: true,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>scales: {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>y: { beginAtZero: true }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>plugins: {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>legend: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>labels: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>color: '#e0e0e0'</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// Exporter en CSV</p>
+<p class="p1">function exportToCSV() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let csv = "Date,Séance,Exercice,Poids (kg),Répétitions,RPE,Notes\n";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>for (const [day, session] of Object.entries(sessions)) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>for (const [exercise, data] of Object.entries(session.exercises)) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>csv += `"${session.date}","${day}","${exercise}","${data.weight || ''}","${data.reps || ''}","${data.rpe || ''}","${session.notes || ''}"\n`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const link = document.createElement('a');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const url = URL.createObjectURL(blob);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>link.setAttribute('href', url);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>link.setAttribute('download', 'historique-seances.csv');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>link.style.visibility = 'hidden';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.body.appendChild(link);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>link.click();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.body.removeChild(link);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// Ajouter un exercice à une séance</p>
+<p class="p1">function addExerciseToSession(day, exerciseType) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const exerciseList = allExercises[exerciseType] || [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const select = document.createElement('select');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>exerciseList.forEach(ex =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const option = document.createElement('option');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>option.value = ex;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>option.textContent = ex;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>select.appendChild(option);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// À intégrer dans une future interface pour ajouter des exercices</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Pour l'instant, les exercices sont prédéfinis dans weeklyProgram</p>
+<p class="p1">}</p>
+</body>
+</html>
