@@ -1,10 +1,9 @@
 {
-  "name": "Mon Coach Sportif",
+  "name": "Coach Mass",
   "short_name": "Coach Mass",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#07111f",
   "theme_color": "#07111f",
-  "description": "Suivi de musculation personnel pour prise de masse",
   "icons": []
 }
