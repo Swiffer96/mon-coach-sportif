@@ -2,145 +2,206 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mon Coach Sportif</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Coach Sportif" />
+  <title>Mon Coach Sportif V3</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/luxon@3.5.0/build/global/luxon.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.umd.min.js"></script>
 </head>
 <body>
   <header class="topbar">
     <div>
-      <p class="eyebrow">App personnelle</p>
+      <p class="eyebrow">Coach perso · V3</p>
       <h1>🏋️ Mon Coach Sportif</h1>
     </div>
-    <button id="startWorkoutBtn" class="primary-btn">Commencer ma séance</button>
+    <button id="openWorkoutPicker" class="primary compact">Nouvelle séance</button>
   </header>
 
-  <nav class="tabs" aria-label="Navigation principale">
-    <button class="tab active" data-tab="home">Accueil</button>
-    <button class="tab" data-tab="program">Programme</button>
-    <button class="tab" data-tab="tracking">Suivi</button>
-    <button class="tab" data-tab="challenges">Défis</button>
-    <button class="tab" data-tab="tips">Conseils</button>
-    <button class="tab" data-tab="injury">Mode Blessure</button>
+  <nav class="tabs" aria-label="Navigation">
+    <button class="tab active" data-page="home">Accueil</button>
+    <button class="tab" data-page="workout">Séance</button>
+    <button class="tab" data-page="templates">Choisir</button>
+    <button class="tab" data-page="tracking">Suivi</button>
+    <button class="tab" data-page="challenges">Défis</button>
+    <button class="tab" data-page="injury">Blessure</button>
+    <button class="tab" data-page="settings">Réglages</button>
   </nav>
 
   <main>
-    <section id="home" class="page active-page">
-      <div class="grid two-cols">
-        <article class="card hero-card">
-          <p class="eyebrow">Aujourd’hui</p>
-          <h2 id="todayTitle">Séance du jour</h2>
-          <p id="nextWorkoutText">Chargement...</p>
-          <div class="goal-box">
-            <span>Objectif actuel</span>
-            <strong>Prise de masse progressive +2 kg / 3 mois</strong>
-          </div>
-        </article>
-        <article class="card">
-          <h2>Vue rapide</h2>
-          <div class="stats-row">
-            <div><span id="sessionCount">0</span><small>séances</small></div>
-            <div><span id="recordCount">0</span><small>records</small></div>
-            <div><span id="weeklySets">0</span><small>séries cette semaine</small></div>
-          </div>
-        </article>
-      </div>
-      <article class="card">
-        <h2>Progression récente</h2>
-        <canvas id="homeChart" height="120"></canvas>
+    <section id="home" class="page active">
+      <article class="card hero">
+        <p class="eyebrow">Usage réel iPhone</p>
+        <h2>Choisis selon ton lieu, ton temps et ton énergie</h2>
+        <p class="muted">Maison 20-30 min ou salle environ 1h. Aucune séance n'est imposée par un jour de la semaine.</p>
+        <div class="segmented">
+          <button class="segment active" data-template-filter="all">Toutes</button>
+          <button class="segment" data-template-filter="home">Maison</button>
+          <button class="segment" data-template-filter="gym">Salle</button>
+        </div>
+        <div id="homeTemplates" class="template-grid"></div>
       </article>
+
+      <section class="grid stats-grid">
+        <article class="card stat"><strong id="statSessions">0</strong><span>séances</span></article>
+        <article class="card stat"><strong id="statWeekSets">0</strong><span>séries cette semaine</span></article>
+        <article class="card stat"><strong id="statHomeGym">0 / 0</strong><span>maison / salle</span></article>
+        <article class="card stat"><strong id="statLast">—</strong><span>dernière séance</span></article>
+      </section>
+
       <article class="card">
-        <h2>Minuteur de repos</h2>
-        <div class="timer-wrap">
-          <label>Repos en secondes <input id="restInput" type="number" min="10" value="90" /></label>
-          <div id="timerDisplay" class="timer">01:30</div>
-          <div class="button-row">
-            <button id="timerStart" class="primary-btn">Démarrer</button>
-            <button id="timerStop">Arrêter</button>
-            <button id="timerReset">Réinitialiser</button>
+        <div class="section-title">
+          <div>
+            <h2>Vue rapide</h2>
+            <p class="muted">Volume des 8 dernières séances enregistrées.</p>
           </div>
+        </div>
+        <canvas id="homeChart" height="130"></canvas>
+      </article>
+    </section>
+
+    <section id="workout" class="page">
+      <article class="card sticky-head">
+        <div class="workout-headline">
+          <div>
+            <p id="activeBadge" class="pill muted-pill">Aucune séance</p>
+            <h2 id="activeTitle">Choisis une séance</h2>
+            <p id="activeMeta" class="muted">Va dans Accueil ou Choisir pour lancer une séance.</p>
+          </div>
+          <div class="timer-card">
+            <span id="timerDisplay" class="timer">01:30</span>
+            <div class="timer-actions">
+              <button id="timerStart">▶</button>
+              <button id="timerReset">↺</button>
+            </div>
+          </div>
+        </div>
+        <div class="button-row">
+          <button id="saveWorkout" class="primary">Enregistrer</button>
+          <button id="cancelWorkout" class="danger">Annuler</button>
+        </div>
+      </article>
+
+      <div id="activeExercises" class="exercise-stack"></div>
+
+      <article class="card">
+        <h2>Ajouter pendant la séance</h2>
+        <p class="muted">Utile si une machine est prise, si tu changes d'envie ou si tu fais un bonus.</p>
+        <div class="inline-form">
+          <select id="addGroup"></select>
+          <select id="addExercise"></select>
+          <button id="addExerciseBtn" class="primary">Ajouter</button>
         </div>
       </article>
     </section>
 
-    <section id="program" class="page">
+    <section id="templates" class="page">
       <article class="card">
-        <h2>Programme hebdomadaire</h2>
-        <p class="muted">Tu peux ajouter, supprimer ou remplacer un exercice dans une séance.</p>
-        <div id="programList"></div>
-      </article>
-      <article class="card">
-        <h2>Séance en cours</h2>
-        <p id="currentSessionInfo" class="muted">Clique sur “Commencer ma séance”.</p>
-        <div id="currentWorkout"></div>
-        <button id="saveWorkoutBtn" class="primary-btn hidden">Enregistrer la séance</button>
+        <div class="section-title">
+          <div>
+            <h2>Bibliothèque de séances</h2>
+            <p class="muted">Séances maison courtes et séances salle plus complètes.</p>
+          </div>
+        </div>
+        <div class="segmented">
+          <button class="segment active" data-template-filter="all">Toutes</button>
+          <button class="segment" data-template-filter="home">Maison</button>
+          <button class="segment" data-template-filter="gym">Salle</button>
+        </div>
+        <div id="templateList" class="template-list"></div>
       </article>
     </section>
 
     <section id="tracking" class="page">
-      <div class="grid two-cols">
+      <section class="grid two">
         <article class="card">
-          <h2>Records personnels</h2>
-          <div id="recordsList"></div>
+          <h2>Records discrets</h2>
+          <p class="muted">Affichés aussi pendant la séance pour te donner un repère.</p>
+          <div id="recordsList" class="records-list"></div>
         </article>
+
         <article class="card">
-          <h2>Graphiques</h2>
-          <label>Exercice à afficher
-            <select id="chartExerciseSelect"></select>
+          <h2>Filtres graphiques</h2>
+          <label>Donnée à afficher
+            <select id="metricFilter">
+              <option value="bestWeight">Meilleur poids</option>
+              <option value="maxReps">Max répétitions</option>
+              <option value="volume">Volume estimé kg x reps</option>
+              <option value="sets">Nombre de séries</option>
+              <option value="avgRpe">RPE moyen</option>
+            </select>
+          </label>
+          <label>Exercice
+            <select id="exerciseFilter"></select>
+          </label>
+          <label>Lieu
+            <select id="placeFilter">
+              <option value="all">Maison + salle</option>
+              <option value="home">Maison seulement</option>
+              <option value="gym">Salle seulement</option>
+            </select>
           </label>
           <label>Période
-            <select id="chartPeriodSelect">
+            <select id="periodFilter">
               <option value="30">1 mois</option>
               <option value="90">3 mois</option>
               <option value="365">1 an</option>
+              <option value="9999">Tout</option>
             </select>
           </label>
         </article>
-      </div>
-      <article class="card"><canvas id="progressChart" height="140"></canvas></article>
-      <article class="card"><canvas id="volumeChart" height="120"></canvas></article>
+      </section>
+
       <article class="card">
-        <h2>Historique des séances</h2>
-        <button id="exportBtn" class="primary-btn">Exporter en CSV / Excel</button>
-        <div id="historyList"></div>
+        <h2>Progression filtrée</h2>
+        <p id="chartHint" class="muted"></p>
+        <canvas id="progressChart" height="150"></canvas>
+      </article>
+
+      <article class="card">
+        <h2>Volume par groupe musculaire</h2>
+        <p class="muted">Filtré par période et lieu. Le volume est une estimation : poids x répétitions.</p>
+        <canvas id="volumeChart" height="150"></canvas>
+      </article>
+
+      <article class="card">
+        <div class="section-title">
+          <div>
+            <h2>Historique</h2>
+            <p class="muted">Chronologique, avec maison/salle et détail des séries.</p>
+          </div>
+          <button id="exportCsv" class="primary compact">Exporter CSV</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
       </article>
     </section>
 
     <section id="challenges" class="page">
-      <article class="card">
-        <h2>Défi hebdomadaire</h2>
-        <p id="challengeTitle" class="big-text"></p>
+      <article class="card hero">
+        <p class="eyebrow">Défi en cours</p>
+        <h2 id="challengeTitle">—</h2>
         <p id="challengeDescription" class="muted"></p>
-        <div class="progress"><span id="challengeBar"></span></div>
-        <p id="challengeProgress"></p>
+        <div class="progress"><span id="challengeProgress"></span></div>
+        <p id="challengeStatus" class="big-line"></p>
         <div class="button-row">
-          <button id="startChallengeBtn" class="primary-btn">Commencer le défi</button>
-          <button id="finishChallengeBtn">Terminer le défi</button>
+          <button id="randomChallenge" class="primary">Nouveau défi aléatoire</button>
+          <button id="finishChallenge">Marquer terminé</button>
         </div>
       </article>
-    </section>
 
-    <section id="tips" class="page">
       <article class="card">
-        <h2>Conseils personnalisés</h2>
-        <div id="tipsList"></div>
-      </article>
-      <article class="card">
-        <h2>Calculateur de protéines</h2>
-        <label>Ton poids en kg <input id="bodyWeightInput" type="number" value="68" /></label>
-        <label>Objectif g/kg <input id="proteinRatioInput" type="number" value="1.8" step="0.1" /></label>
-        <p id="proteinResult" class="big-text"></p>
+        <h2>Choisir un défi</h2>
+        <p class="muted">Plus de choix : maison, salle, volume, régularité, technique.</p>
+        <div id="challengeList" class="challenge-list"></div>
       </article>
     </section>
 
     <section id="injury" class="page">
       <article class="card">
-        <h2>Mode Blessure</h2>
-        <p class="muted">Choisis une zone. L’app proposera des substitutions plus prudentes.</p>
-        <label>Zone blessée
+        <h2>Mode Blessure / Prudence</h2>
+        <p class="warning">Ce mode n'est pas un avis médical. Il propose des alternatives souvent plus prudentes. Si la douleur augmente, stop.</p>
+        <label>Zone à ménager
           <select id="injurySelect">
             <option value="none">Aucune</option>
             <option value="shoulders">Épaules</option>
@@ -148,16 +209,37 @@
             <option value="knees">Genoux</option>
           </select>
         </label>
-        <button id="applyInjuryBtn" class="primary-btn">Appliquer les substitutions</button>
-        <div id="injurySuggestions"></div>
+        <div id="injuryAdvice" class="advice-list"></div>
+      </article>
+    </section>
+
+    <section id="settings" class="page">
+      <article class="card">
+        <h2>Sauvegarde</h2>
+        <p class="muted">Le navigateur stocke tes données localement. Fais une sauvegarde JSON de temps en temps.</p>
+        <div class="button-row">
+          <button id="exportJson" class="primary">Sauvegarder JSON</button>
+          <label class="file-button">Restaurer JSON <input id="importJson" type="file" accept="application/json" /></label>
+        </div>
+      </article>
+      <article class="card">
+        <h2>Minuteur</h2>
+        <label>Repos par défaut en secondes
+          <input id="restSeconds" type="number" min="20" max="300" step="5" />
+        </label>
+      </article>
+      <article class="card">
+        <h2>Calculateur protéines</h2>
+        <div class="inline-form">
+          <input id="bodyWeight" type="number" inputmode="decimal" placeholder="Poids en kg" />
+          <button id="proteinBtn" class="primary">Calculer</button>
+        </div>
+        <p id="proteinResult" class="big-line"></p>
       </article>
     </section>
   </main>
 
-  <footer>
-    Données stockées uniquement dans ce navigateur avec localStorage.
-  </footer>
-
+  <div id="toast" class="toast"></div>
   <script src="script.js"></script>
 </body>
 </html>
