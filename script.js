@@ -1,11 +1,13 @@
-/* Mon Coach Sportif V3 - JavaScript simple, sans framework.
-   Objectif : usage rapide sur iPhone, données locales, filtres clairs. */
+/* Mon Coach Sportif V4
+   Application simple : HTML + CSS + JavaScript, sans framework, sans serveur.
+   Objectif : prise de masse, usage iPhone, sauvegarde locale + export JSON. */
 
-// --- DONNÉES DE BASE ---
-const STORAGE_KEY = "coachSportifV3";
+// --- STOCKAGE LOCAL ---
+const STORAGE_KEY = "coachSportifV4";
 
+// --- EXERCICES ---
 const EXERCISES = {
-  Push: ["Développé couché", "Développé incliné", "Dips", "Peck Deck", "Pompes", "Pompes inclinées", "Pompes diamant", "Écarté haltères"],
+  Push: ["Développé couché", "Développé incliné", "Dips", "Peck Deck", "Pompes", "Pompes inclinées", "Écarté haltères", "Développé haltères"],
   Pull: ["Tractions", "Rowing barre", "Tirage horizontal", "Curl biceps", "Shrugs", "Rowing élastique", "Curl élastique", "Superman"],
   Jambes: ["Squat", "Leg Press", "Fentes marchées", "Soulevé de terre", "Soulevé de terre roumain", "Leg Curl", "Mollets", "Squat goblet", "Fentes arrière", "Pont fessier"],
   Épaules: ["Élévations latérales", "Développé militaire", "Face pull", "Oiseau haltères", "Rotation externe élastique"],
@@ -13,27 +15,27 @@ const EXERCISES = {
 };
 
 const ICONS = {
-  "Développé couché": "💪", "Développé incliné": "💪", "Dips": "💪", "Peck Deck": "🦋", "Pompes": "🤲", "Pompes inclinées": "🤲", "Pompes diamant": "💎", "Écarté haltères": "🦋",
-  "Tractions": "🧗", "Rowing barre": "🚣", "Tirage horizontal": "🚣", "Curl biceps": "💪", "Shrugs": "🏔️", "Rowing élastique": "🪢", "Curl élastique": "🪢", "Superman": "🦸",
-  "Squat": "🏋️", "Leg Press": "🦵", "Fentes marchées": "🚶", "Soulevé de terre": "🏋️", "Soulevé de terre roumain": "🏋️", "Leg Curl": "🦵", "Mollets": "🦶", "Squat goblet": "🏋️", "Fentes arrière": "🚶", "Pont fessier": "🌉",
-  "Élévations latérales": "🪽", "Développé militaire": "🎖️", "Face pull": "🪢", "Oiseau haltères": "🪽", "Rotation externe élastique": "🛡️",
-  "Crunchs": "🔥", "Gainage": "🧱", "Relevés de jambes": "🔥", "Planche": "🧱", "Dead bug": "🐞", "Mountain climbers": "⛰️"
+  "Développé couché":"💪", "Développé incliné":"💪", "Dips":"💪", "Peck Deck":"🦋", "Pompes":"🤲", "Pompes inclinées":"🤲", "Écarté haltères":"🦋", "Développé haltères":"🏋️",
+  "Tractions":"🧗", "Rowing barre":"🚣", "Tirage horizontal":"🚣", "Curl biceps":"💪", "Shrugs":"🦍", "Rowing élastique":"🪢", "Curl élastique":"🪢", "Superman":"🦸",
+  "Squat":"🏋️", "Leg Press":"🦵", "Fentes marchées":"🚶", "Soulevé de terre":"🏗️", "Soulevé de terre roumain":"🏗️", "Leg Curl":"🦵", "Mollets":"🦶", "Squat goblet":"🏋️", "Fentes arrière":"🚶", "Pont fessier":"🌉",
+  "Élévations latérales":"🪽", "Développé militaire":"🎖️", "Face pull":"🛡️", "Oiseau haltères":"🪽", "Rotation externe élastique":"🛡️",
+  "Crunchs":"🔥", "Gainage":"🧱", "Relevés de jambes":"🔥", "Planche":"🧱", "Dead bug":"🐞", "Mountain climbers":"⛰️"
 };
 
+// --- SÉANCES MAISON / SALLE ---
 const TEMPLATES = [
-  { id: "home-push-20", place: "home", type: "Push", duration: 22, name: "Maison Push express", exercises: ["Pompes", "Pompes inclinées", "Pompes diamant", "Élévations latérales", "Gainage"] },
-  { id: "home-pull-25", place: "home", type: "Pull", duration: 25, name: "Maison Pull élastique", exercises: ["Rowing élastique", "Curl élastique", "Face pull", "Superman", "Dead bug"] },
-  { id: "home-legs-30", place: "home", type: "Jambes", duration: 30, name: "Maison Jambes 30 min", exercises: ["Squat goblet", "Fentes arrière", "Pont fessier", "Mollets", "Planche"] },
-  { id: "home-full-20", place: "home", type: "Full Body", duration: 20, name: "Maison Full Body rapide", exercises: ["Pompes", "Squat goblet", "Rowing élastique", "Mountain climbers"] },
-  { id: "home-core-25", place: "home", type: "Abdos", duration: 25, name: "Maison Abdos + mobilité", exercises: ["Gainage", "Crunchs", "Dead bug", "Relevés de jambes", "Rotation externe élastique"] },
-  { id: "home-shoulders-safe", place: "home", type: "Épaules", duration: 20, name: "Maison épaules prudentes", exercises: ["Face pull", "Rotation externe élastique", "Oiseau haltères", "Gainage"] },
-
-  { id: "gym-push-60", place: "gym", type: "Push", duration: 60, name: "Salle Push force", exercises: ["Développé couché", "Développé incliné", "Peck Deck", "Dips", "Élévations latérales"] },
-  { id: "gym-pull-60", place: "gym", type: "Pull", duration: 60, name: "Salle Pull dos", exercises: ["Tractions", "Rowing barre", "Tirage horizontal", "Curl biceps", "Shrugs"] },
-  { id: "gym-legs-60", place: "gym", type: "Jambes", duration: 60, name: "Salle Jambes squat", exercises: ["Squat", "Leg Press", "Fentes marchées", "Leg Curl", "Mollets"] },
-  { id: "gym-posterior-60", place: "gym", type: "Jambes", duration: 60, name: "Salle chaîne arrière", exercises: ["Soulevé de terre", "Soulevé de terre roumain", "Leg Curl", "Pont fessier", "Gainage"] },
-  { id: "gym-upper-60", place: "gym", type: "Haut", duration: 60, name: "Salle Haut du corps", exercises: ["Développé incliné", "Tractions", "Rowing barre", "Peck Deck", "Curl biceps"] },
-  { id: "gym-full-60", place: "gym", type: "Full Body", duration: 60, name: "Salle Full Body", exercises: ["Squat", "Développé couché", "Tractions", "Leg Press", "Peck Deck"] }
+  { id:"home-push-25", place:"home", type:"Push", duration:25, name:"Maison Push 25 min", goal:"Pompes + pectoraux sans matériel", exercises:["Pompes", "Pompes inclinées", "Écarté haltères", "Élévations latérales", "Gainage"] },
+  { id:"home-pull-25", place:"home", type:"Pull", duration:25, name:"Maison Pull élastique 25 min", goal:"Dos + biceps rapide", exercises:["Rowing élastique", "Curl élastique", "Superman", "Face pull", "Dead bug"] },
+  { id:"home-legs-30", place:"home", type:"Jambes", duration:30, name:"Maison Jambes 30 min", goal:"Jambes sans machine", exercises:["Squat goblet", "Fentes arrière", "Pont fessier", "Mollets", "Planche"] },
+  { id:"home-full-20", place:"home", type:"Full Body", duration:20, name:"Maison Full Body express", goal:"Séance courte mais utile", exercises:["Pompes", "Squat goblet", "Rowing élastique", "Mountain climbers"] },
+  { id:"home-core-25", place:"home", type:"Abdos", duration:25, name:"Maison Abdos + mobilité", goal:"Gainage, abdos, prévention", exercises:["Gainage", "Crunchs", "Dead bug", "Relevés de jambes", "Rotation externe élastique"] },
+  { id:"home-shoulders-safe", place:"home", type:"Épaules", duration:20, name:"Maison épaules prudentes", goal:"Renforcement doux", exercises:["Face pull", "Rotation externe élastique", "Oiseau haltères", "Gainage"] },
+  { id:"gym-push-60", place:"gym", type:"Push", duration:60, name:"Salle Push force", goal:"Pecs + épaules + triceps", exercises:["Développé couché", "Développé incliné", "Peck Deck", "Dips", "Élévations latérales"] },
+  { id:"gym-pull-60", place:"gym", type:"Pull", duration:60, name:"Salle Pull dos", goal:"Dos + biceps", exercises:["Tractions", "Rowing barre", "Tirage horizontal", "Curl biceps", "Shrugs"] },
+  { id:"gym-legs-60", place:"gym", type:"Jambes", duration:60, name:"Salle Jambes squat", goal:"Quadriceps + fessiers", exercises:["Squat", "Leg Press", "Fentes marchées", "Leg Curl", "Mollets"] },
+  { id:"gym-posterior-60", place:"gym", type:"Jambes", duration:60, name:"Salle chaîne arrière", goal:"Ischios + fessiers + dos prudent", exercises:["Soulevé de terre", "Soulevé de terre roumain", "Leg Curl", "Pont fessier", "Gainage"] },
+  { id:"gym-upper-60", place:"gym", type:"Haut", duration:60, name:"Salle Haut du corps", goal:"Haut complet", exercises:["Développé incliné", "Tractions", "Rowing barre", "Peck Deck", "Curl biceps"] },
+  { id:"gym-full-60", place:"gym", type:"Full Body", duration:60, name:"Salle Full Body", goal:"Tout le corps", exercises:["Squat", "Développé couché", "Tractions", "Leg Press", "Peck Deck"] }
 ];
 
 const INITIAL_RECORDS = {
@@ -45,524 +47,585 @@ const INITIAL_RECORDS = {
 };
 
 const INJURY_SUBS = {
-  shoulders: {
-    label: "Épaules",
-    avoid: ["Développé couché", "Développé incliné", "Dips", "Développé militaire", "Pompes diamant"],
-    subs: { "Développé couché": "Peck Deck", "Développé incliné": "Peck Deck", "Dips": "Pompes inclinées", "Développé militaire": "Face pull", "Pompes diamant": "Pompes inclinées" }
-  },
-  back: {
-    label: "Dos",
-    avoid: ["Soulevé de terre", "Soulevé de terre roumain", "Rowing barre", "Squat"],
-    subs: { "Soulevé de terre": "Leg Curl", "Soulevé de terre roumain": "Pont fessier", "Rowing barre": "Tirage horizontal", "Squat": "Leg Press" }
-  },
-  knees: {
-    label: "Genoux",
-    avoid: ["Squat", "Fentes marchées", "Fentes arrière", "Leg Press"],
-    subs: { "Squat": "Pont fessier", "Fentes marchées": "Leg Curl", "Fentes arrière": "Pont fessier", "Leg Press": "Leg Curl" }
-  }
+  shoulders: { label:"Épaules", avoid:["Développé couché", "Développé incliné", "Dips", "Développé militaire"], subs:{"Développé couché":"Peck Deck", "Développé incliné":"Peck Deck", "Dips":"Pompes inclinées", "Développé militaire":"Face pull"} },
+  back: { label:"Dos", avoid:["Soulevé de terre", "Soulevé de terre roumain", "Rowing barre", "Squat"], subs:{"Soulevé de terre":"Leg Curl", "Soulevé de terre roumain":"Pont fessier", "Rowing barre":"Tirage horizontal", "Squat":"Leg Press"} },
+  knees: { label:"Genoux", avoid:["Squat", "Fentes marchées", "Fentes arrière", "Leg Press"], subs:{"Squat":"Pont fessier", "Fentes marchées":"Leg Curl", "Fentes arrière":"Pont fessier", "Leg Press":"Leg Curl"} }
 };
 
 const CHALLENGES = [
-  { id: "home-3x", name: "3 séances maison", desc: "Faire 3 séances maison sur 7 jours.", days: 7, metric: "sessions", place: "home", target: 3 },
-  { id: "gym-3x", name: "3 séances salle", desc: "Faire 3 séances à la salle sur 7 jours.", days: 7, metric: "sessions", place: "gym", target: 3 },
-  { id: "push-40", name: "40 séries Push", desc: "Cumuler 40 séries Push en 14 jours.", days: 14, metric: "sets", type: "Push", target: 40 },
-  { id: "pull-35", name: "35 séries Pull", desc: "Cumuler 35 séries Pull en 14 jours.", days: 14, metric: "sets", type: "Pull", target: 35 },
-  { id: "legs-45", name: "45 séries Jambes", desc: "Cumuler 45 séries jambes en 14 jours.", days: 14, metric: "sets", type: "Jambes", target: 45 },
-  { id: "squat-100", name: "100 reps de Squat", desc: "Atteindre 100 répétitions de Squat en 7 jours.", days: 7, metric: "reps", exercise: "Squat", target: 100 },
-  { id: "pushups-150", name: "150 pompes", desc: "Atteindre 150 pompes en 7 jours.", days: 7, metric: "reps", exercise: "Pompes", target: 150 },
-  { id: "pullups-30", name: "30 tractions", desc: "Cumuler 30 tractions en 14 jours.", days: 14, metric: "reps", exercise: "Tractions", target: 30 },
-  { id: "core-12", name: "12 séries Abdos", desc: "Faire 12 séries d'abdos/gainage en 7 jours.", days: 7, metric: "sets", type: "Abdos", target: 12 },
-  { id: "volume-12000", name: "12 000 kg de volume", desc: "Cumuler 12 000 kg x reps en 7 jours.", days: 7, metric: "volume", target: 12000 },
-  { id: "shoulder-care", name: "Routine épaules prudentes", desc: "Faire 8 séries Face pull / rotation externe en 10 jours.", days: 10, metric: "sets", exercises: ["Face pull", "Rotation externe élastique"], target: 8 },
-  { id: "consistency-5", name: "5 séances en 14 jours", desc: "Tenir une régularité simple : 5 séances en 14 jours.", days: 14, metric: "sessions", target: 5 }
+  { id:"mass-regular", name:"Régularité prise de masse", desc:"Faire 4 séances en 10 jours.", days:10, metric:"sessions", target:4 },
+  { id:"gym-3", name:"3 séances salle", desc:"Faire 3 séances salle en 7 jours.", days:7, metric:"sessions", place:"gym", target:3 },
+  { id:"home-3", name:"3 séances maison", desc:"Faire 3 séances maison en 7 jours.", days:7, metric:"sessions", place:"home", target:3 },
+  { id:"push-45", name:"45 séries Push", desc:"Cumuler 45 séries Push en 14 jours.", days:14, metric:"sets", type:"Push", target:45 },
+  { id:"pull-40", name:"40 séries Pull", desc:"Cumuler 40 séries Pull en 14 jours.", days:14, metric:"sets", type:"Pull", target:40 },
+  { id:"legs-50", name:"50 séries Jambes", desc:"Cumuler 50 séries jambes en 14 jours.", days:14, metric:"sets", type:"Jambes", target:50 },
+  { id:"squat-120", name:"120 reps Squat", desc:"Cumuler 120 répétitions de Squat en 14 jours.", days:14, metric:"reps", exercise:"Squat", target:120 },
+  { id:"pushups-200", name:"200 pompes", desc:"Cumuler 200 pompes en 14 jours.", days:14, metric:"reps", exercise:"Pompes", target:200 },
+  { id:"pullups-35", name:"35 tractions", desc:"Cumuler 35 tractions en 14 jours.", days:14, metric:"reps", exercise:"Tractions", target:35 },
+  { id:"volume-20000", name:"20 000 kg de volume", desc:"Cumuler 20 000 kg x reps en 10 jours.", days:10, metric:"volume", target:20000 },
+  { id:"pain-free", name:"Séances propres", desc:"Faire 3 séances avec douleur moyenne inférieure à 2/5.", days:14, metric:"lowPainSessions", target:3 },
+  { id:"protein-week", name:"Rappel protéines", desc:"Noter ton poids et consulter les conseils nutrition 3 fois.", days:7, metric:"nutritionViews", target:3 }
 ];
 
-// --- ÉTAT DE L'APPLICATION ---
-const defaultData = () => ({
-  sessions: [],
-  records: structuredClone(INITIAL_RECORDS),
-  settings: { restSeconds: 90, injury: "none" },
-  active: null,
-  challenge: { ...CHALLENGES[0], startedAt: new Date().toISOString(), finished: false }
-});
-let data = loadData();
-let timerInterval = null;
-let timerRemaining = data.settings.restSeconds;
-let charts = { home: null, progress: null, volume: null };
+// --- DONNÉES PAR DÉFAUT ---
+function defaultData(){
+  return {
+    sessions: [],
+    records: deepClone(INITIAL_RECORDS),
+    settings: { restSeconds:90, injury:"none", bodyWeight:"", objective:"Prise de masse" },
+    active: null,
+    counters: { nutritionViews:0 },
+    challenge: { ...CHALLENGES[0], startedAt:new Date().toISOString(), finished:false }
+  };
+}
 
-function loadData() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (!saved) return defaultData();
-    const parsed = JSON.parse(saved);
-    return { ...defaultData(), ...parsed, settings: { ...defaultData().settings, ...(parsed.settings || {}) } };
-  } catch (e) {
-    return defaultData();
-  }
+let data = loadData();
+let timerRemaining = data.settings.restSeconds || 90;
+let timerInterval = null;
+let pendingFinishedSession = null;
+
+// --- OUTILS SIMPLES ---
+function $(id){ return document.getElementById(id); }
+function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
+function saveData(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function loadData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return defaultData();
+    const parsed = JSON.parse(raw);
+    const merged = { ...defaultData(), ...parsed };
+    merged.settings = { ...defaultData().settings, ...(parsed.settings || {}) };
+    merged.counters = { ...defaultData().counters, ...(parsed.counters || {}) };
+    return merged;
+  }catch(e){ return defaultData(); }
 }
-function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-function $(id) { return document.getElementById(id); }
-function toast(message) {
-  const el = $("toast");
-  el.textContent = message;
-  el.classList.add("show");
-  setTimeout(() => el.classList.remove("show"), 1800);
-}
-function todayLabel(date = new Date()) { return date.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }); }
-function dateShort(iso) { return new Date(iso).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }); }
-function placeLabel(place) { return place === "home" ? "Maison" : "Salle"; }
-function groupOfExercise(name) {
-  return Object.keys(EXERCISES).find(g => EXERCISES[g].includes(name)) || "Autre";
-}
-function exerciseIcon(name) { return ICONS[name] || "🏋️"; }
-function sum(arr) { return arr.reduce((a, b) => a + b, 0); }
-function daysAgo(days) { const d = new Date(); d.setDate(d.getDate() - Number(days)); return d; }
-function templateVisible(t, filter) { return filter === "all" || t.place === filter; }
+function toast(msg){ const el=$("toast"); el.textContent=msg; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1800); }
+function groupOf(name){ return Object.keys(EXERCISES).find(g => EXERCISES[g].includes(name)) || "Autre"; }
+function icon(name){ return ICONS[name] || "🏋️"; }
+function placeLabel(p){ return p === "home" ? "Maison" : "Salle"; }
+function fmtDate(iso){ return new Date(iso).toLocaleDateString("fr-FR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" }); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function daysAgo(n){ const d = new Date(); d.setDate(d.getDate() - Number(n)); return d; }
+function number(v){ return Number(String(v).replace(",", ".")) || 0; }
+function allExercises(){ return [...new Set(Object.values(EXERCISES).flat())].sort((a,b)=>a.localeCompare(b,"fr")); }
+function setVolume(set){ return number(set.weight) * number(set.reps); }
+function sessionVolume(s){ return s.exercises.reduce((total,e)=>total+e.sets.reduce((t,set)=>t+setVolume(set),0),0); }
+function sessionSets(s){ return s.exercises.reduce((total,e)=>total+e.sets.length,0); }
+function sessionReps(s){ return s.exercises.reduce((total,e)=>total+e.sets.reduce((t,set)=>t+number(set.reps),0),0); }
+function avg(arr){ const nums = arr.map(number).filter(n=>n>0); return nums.length ? nums.reduce((a,b)=>a+b,0)/nums.length : 0; }
+function safeId(){ return (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random())); }
 
 // --- NAVIGATION ---
-document.querySelectorAll(".tab").forEach(btn => {
-  btn.addEventListener("click", () => showPage(btn.dataset.page));
-});
-function showPage(page) {
+document.querySelectorAll(".tab").forEach(btn => btn.addEventListener("click", () => showPage(btn.dataset.page)));
+function showPage(page){
   document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b.dataset.page === page));
   document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === page));
-  if (page === "tracking") renderCharts();
+  if(page === "tracking") renderTracking();
+  if(page === "nutrition") { data.counters.nutritionViews += 1; saveData(); renderNutrition(); renderChallenge(); }
 }
 
 // --- RENDU GLOBAL ---
-function renderAll() {
+function renderAll(){
   saveData();
-  renderTemplateButtons();
+  renderHome();
+  renderLibrary();
   renderActiveWorkout();
-  renderStats();
-  renderRecords();
-  renderHistory();
-  renderFilters();
+  renderTracking();
+  renderNutrition();
   renderChallenge();
-  renderInjury();
-  renderSettings();
-  renderCharts();
+  renderSafety();
+  renderAddExerciseSelects();
 }
 
-function renderTemplateButtons(filter = "all") {
-  const homeTarget = $("homeTemplates");
-  const listTarget = $("templateList");
-  const cards = TEMPLATES.filter(t => templateVisible(t, filter));
-
-  homeTarget.innerHTML = cards.slice(0, 6).map(templateCardHtml).join("");
-  listTarget.innerHTML = cards.map(templateCardHtml).join("");
-
-  document.querySelectorAll("[data-start-template]").forEach(btn => {
-    btn.addEventListener("click", () => startWorkout(btn.dataset.startTemplate));
-  });
+// --- ACCUEIL / BIBLIOTHÈQUE ---
+function templatePasses(t, filter){
+  if(filter === "all") return true;
+  if(filter === "home" || filter === "gym") return t.place === filter;
+  if(filter === "push") return t.type === "Push";
+  if(filter === "pull") return t.type === "Pull";
+  if(filter === "legs") return t.type === "Jambes";
+  return true;
 }
-
-function templateCardHtml(t) {
+function templateCard(t){
   return `<div class="template-card">
-    <div class="section-title">
-      <div>
-        <h3>${t.name}</h3>
-        <div class="meta">
-          <span class="pill ${t.place === "home" ? "home-pill" : "gym-pill"}">${placeLabel(t.place)}</span>
-          <span class="pill">${t.type}</span>
-          <span class="pill muted-pill">${t.duration} min</span>
-        </div>
-      </div>
-    </div>
-    <p class="muted">${t.exercises.map(e => `${exerciseIcon(e)} ${e}`).join(" · ")}</p>
+    <div class="section-title"><div><h3>${t.name}</h3><p class="muted">${t.goal}</p></div></div>
+    <div class="meta"><span class="pill ${t.place === "home" ? "home-pill" : "gym-pill"}">${placeLabel(t.place)}</span><span class="pill">${t.type}</span><span class="pill muted-pill">${t.duration} min</span><span class="pill mass-pill">prise de masse</span></div>
+    <p class="muted">${t.exercises.map(e => `${icon(e)} ${e}`).join(" · ")}</p>
     <button class="primary" data-start-template="${t.id}">Lancer</button>
   </div>`;
 }
-
-document.querySelectorAll("[data-template-filter]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const filter = btn.dataset.templateFilter;
-    document.querySelectorAll("[data-template-filter]").forEach(b => b.classList.toggle("active", b.dataset.templateFilter === filter));
-    renderTemplateButtons(filter);
-  });
-});
-$("openWorkoutPicker").addEventListener("click", () => showPage("templates"));
+function renderHome(){
+  const sinceWeek = daysAgo(7);
+  const week = data.sessions.filter(s => new Date(s.startedAt) >= sinceWeek);
+  $("statSessions").textContent = data.sessions.length;
+  $("statWeekSets").textContent = week.reduce((t,s)=>t+sessionSets(s),0);
+  $("statWeekVolume").textContent = Math.round(week.reduce((t,s)=>t+sessionVolume(s),0)).toLocaleString("fr-FR");
+  const home = data.sessions.filter(s=>s.place==="home").length;
+  const gym = data.sessions.filter(s=>s.place==="gym").length;
+  $("statBalance").textContent = `${home} / ${gym}`;
+  const suggested = TEMPLATES.filter(t => t.place === "gym").slice(0,3).concat(TEMPLATES.filter(t => t.place === "home").slice(0,3));
+  $("suggestedSessions").innerHTML = suggested.map(templateCard).join("");
+  bindStartButtons();
+  drawHomeChart();
+}
+function renderLibrary(filter="all"){
+  $("templateList").innerHTML = TEMPLATES.filter(t=>templatePasses(t,filter)).map(templateCard).join("");
+  bindStartButtons();
+}
+function bindStartButtons(){
+  document.querySelectorAll("[data-start-template]").forEach(btn => btn.onclick = () => startWorkout(btn.dataset.startTemplate));
+}
+document.querySelectorAll("[data-template-filter]").forEach(btn => btn.addEventListener("click", () => {
+  const filter = btn.dataset.templateFilter;
+  document.querySelectorAll("[data-template-filter]").forEach(b => b.classList.toggle("active", b.dataset.templateFilter === filter));
+  renderLibrary(filter);
+}));
+document.querySelectorAll("[data-filter-open]").forEach(btn => btn.addEventListener("click", () => {
+  showPage("library"); renderLibrary(btn.dataset.filterOpen);
+}));
+$("quickStartBtn").addEventListener("click", () => showPage("library"));
 
 // --- SÉANCE ACTIVE ---
-function startWorkout(templateId) {
-  const template = TEMPLATES.find(t => t.id === templateId);
-  if (!template) return;
-  let exercises = template.exercises.map(name => ({ name, type: groupOfExercise(name), sets: [emptySet()] }));
-  exercises = applyInjurySubstitutions(exercises);
-  data.active = {
-    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-    startedAt: new Date().toISOString(),
-    templateId: template.id,
-    templateName: template.name,
-    place: template.place,
-    type: template.type,
-    duration: template.duration,
-    exercises
-  };
-  timerRemaining = data.settings.restSeconds;
-  resetTimer();
-  saveData();
-  renderActiveWorkout();
-  showPage("workout");
-  toast(`${template.name} lancée`);
-}
-function emptySet() { return { weight: "", reps: "", rpe: "", notes: "" }; }
-function applyInjurySubstitutions(exercises) {
-  const injury = data.settings.injury;
-  if (injury === "none" || !INJURY_SUBS[injury]) return exercises;
-  const sub = INJURY_SUBS[injury].subs;
+function emptySet(){ return { weight:"", reps:"", rpe:"", pain:0, notes:"" }; }
+function applyInjury(exercises){
+  const inj = data.settings.injury;
+  if(inj === "none" || !INJURY_SUBS[inj]) return exercises;
+  const subs = INJURY_SUBS[inj].subs;
   return exercises.map(ex => {
-    const newName = sub[ex.name] || ex.name;
-    return { ...ex, name: newName, type: groupOfExercise(newName) };
+    const newName = subs[ex.name] || ex.name;
+    return { ...ex, name:newName, type:groupOf(newName) };
   });
 }
-function renderActiveWorkout() {
-  const active = data.active;
-  populateExerciseSelectors();
-  if (!active) {
-    $("activeBadge").textContent = "Aucune séance";
-    $("activeBadge").className = "pill muted-pill";
+function startWorkout(templateId){
+  const t = TEMPLATES.find(x=>x.id===templateId);
+  if(!t) return;
+  let exercises = t.exercises.map(name => ({ id:safeId(), name, type:groupOf(name), sets:[emptySet()] }));
+  exercises = applyInjury(exercises);
+  data.active = { id:safeId(), startedAt:new Date().toISOString(), templateId:t.id, templateName:t.name, place:t.place, type:t.type, duration:t.duration, readiness:{energy:"normal", sleep:"correct", pain:"none"}, exercises };
+  timerRemaining = data.settings.restSeconds;
+  stopTimer();
+  renderAll();
+  showPage("workout");
+  toast(`${t.name} lancée`);
+}
+function renderActiveWorkout(){
+  const a = data.active;
+  if(!a){
+    $("activeBadge").textContent = "Aucune séance active";
     $("activeTitle").textContent = "Choisis une séance";
-    $("activeMeta").textContent = "Va dans Accueil ou Choisir pour lancer une séance.";
-    $("activeExercises").innerHTML = `<article class="card"><p class="muted">Aucune séance en cours.</p></article>`;
+    $("activeMeta").textContent = "Va dans “Choisir” ou lance une séance depuis l'accueil.";
+    $("readinessPanel").innerHTML = "";
+    $("activeExercises").innerHTML = `<div class="empty">Aucune séance en cours.</div>`;
     return;
   }
-  $("activeBadge").textContent = `${placeLabel(active.place)} · ${active.duration} min`;
-  $("activeBadge").className = `pill ${active.place === "home" ? "home-pill" : "gym-pill"}`;
-  $("activeTitle").textContent = active.templateName;
-  $("activeMeta").textContent = `Début : ${dateShort(active.startedAt)} · ${active.type}`;
-  $("activeExercises").innerHTML = active.exercises.map((ex, exIndex) => exerciseCardHtml(ex, exIndex)).join("");
-  bindWorkoutButtons();
+  $("activeBadge").textContent = `${placeLabel(a.place)} · ${a.duration} min · ${a.type}`;
+  $("activeBadge").className = `pill ${a.place === "home" ? "home-pill" : "gym-pill"}`;
+  $("activeTitle").textContent = a.templateName;
+  $("activeMeta").textContent = `Démarrée le ${fmtDate(a.startedAt)} · objectif prise de masse`;
+  renderReadiness();
+  $("activeExercises").innerHTML = a.exercises.map((ex, exIndex) => exerciseHtml(ex, exIndex)).join("");
+  bindWorkoutEvents();
 }
-function exerciseCardHtml(ex, exIndex) {
-  const record = data.records[ex.name] || { weight: 0, reps: 0 };
-  const recordText = record.weight ? `record ${record.weight} kg` : (record.reps ? `record ${record.reps} reps` : "pas encore de record");
-  return `<div class="exercise-card">
-    <div class="exercise-top">
-      <div>
-        <h3>${exerciseIcon(ex.name)} ${ex.name}</h3>
-        <div class="exercise-meta"><span class="pill">${ex.type}</span><span class="pill muted-pill">${ex.sets.length} série(s)</span></div>
-      </div>
-      <div class="record-hint">${recordText}</div>
+function renderReadiness(){
+  const r = data.active.readiness;
+  const groups = [
+    { key:"energy", label:"Énergie", values:[["low","Basse"],["normal","OK"],["high","Haute"]] },
+    { key:"sleep", label:"Sommeil", values:[["bad","Mauvais"],["correct","OK"],["good","Bon"]] },
+    { key:"pain", label:"Douleur", values:[["none","Non"],["light","Légère"],["careful","Prudence"]] }
+  ];
+  $("readinessPanel").innerHTML = groups.map(g => `<div class="mini-choice"><span>${g.label}</span><div class="choice-row">${g.values.map(v => `<button data-ready-key="${g.key}" data-ready-val="${v[0]}" class="${r[g.key]===v[0]?'active':''}">${v[1]}</button>`).join("")}</div></div>`).join("");
+  document.querySelectorAll("[data-ready-key]").forEach(btn => btn.onclick = () => { data.active.readiness[btn.dataset.readyKey] = btn.dataset.readyVal; renderAll(); });
+}
+function exerciseHtml(ex, exIndex){
+  const record = data.records[ex.name];
+  const recordText = record ? `${record.weight ? `record ${record.weight} kg` : ""}${record.weight && record.reps ? " · " : ""}${record.reps ? `record ${record.reps} reps` : ""}` : "pas encore de record";
+  return `<article class="exercise-card" data-ex-index="${exIndex}">
+    <div class="exercise-title">
+      <div><h3>${icon(ex.name)} ${ex.name}</h3><p class="record-note">${recordText}</p></div>
+      <span class="pill">${ex.type}</span>
     </div>
-    ${ex.sets.map((set, setIndex) => setRowHtml(set, exIndex, setIndex)).join("")}
-    <div class="button-row">
-      <button data-add-set="${exIndex}">+ Série</button>
-      <button data-replace-exercise="${exIndex}">Remplacer</button>
-      <button class="danger" data-remove-exercise="${exIndex}">Supprimer</button>
+    ${ex.sets.map((set,setIndex)=>setHtml(set,exIndex,setIndex)).join("")}
+    <div class="exercise-actions">
+      <button data-add-set="${exIndex}" class="primary small">+ Série</button>
+      <button data-copy-set="${exIndex}" class="small">Copier</button>
+      <button data-replace-ex="${exIndex}" class="small">Remplacer</button>
+      <button data-delete-ex="${exIndex}" class="danger ghost small">Supprimer</button>
     </div>
+  </article>`;
+}
+function setHtml(set, exIndex, setIndex){
+  return `<div class="set-block">
+    <div class="set-row">
+      <div class="set-label">S${setIndex+1}</div>
+      <input data-field="weight" data-ex="${exIndex}" data-set="${setIndex}" type="number" inputmode="decimal" step="0.5" placeholder="kg" value="${set.weight}">
+      <input data-field="reps" data-ex="${exIndex}" data-set="${setIndex}" type="number" inputmode="numeric" step="1" placeholder="reps" value="${set.reps}">
+      <input data-field="rpe" data-ex="${exIndex}" data-set="${setIndex}" type="number" inputmode="decimal" step="0.5" min="1" max="10" placeholder="RPE" value="${set.rpe}">
+    </div>
+    <div class="stepper-row">
+      <button data-step="weight:-2.5" data-ex="${exIndex}" data-set="${setIndex}">-2,5 kg</button>
+      <button data-step="weight:2.5" data-ex="${exIndex}" data-set="${setIndex}">+2,5 kg</button>
+      <button data-step="reps:-1" data-ex="${exIndex}" data-set="${setIndex}">-1 rep</button>
+      <button data-step="reps:1" data-ex="${exIndex}" data-set="${setIndex}">+1 rep</button>
+    </div>
+    <div class="notes-row">
+      <input data-field="notes" data-ex="${exIndex}" data-set="${setIndex}" type="text" placeholder="note rapide" value="${set.notes || ""}">
+      <select data-field="pain" data-ex="${exIndex}" data-set="${setIndex}">
+        ${[0,1,2,3,4,5].map(n => `<option value="${n}" ${Number(set.pain)===n?'selected':''}>douleur ${n}/5</option>`).join("")}
+      </select>
+    </div>
+    <div class="exercise-actions"><button data-delete-set="${exIndex}:${setIndex}" class="danger ghost small">Supprimer cette série</button></div>
   </div>`;
 }
-function setRowHtml(set, exIndex, setIndex) {
-  return `<div class="set-row">
-    <label>kg
-      <input data-field="weight" data-ex="${exIndex}" data-set="${setIndex}" type="number" inputmode="decimal" value="${set.weight}" placeholder="0" />
-    </label>
-    <label>reps
-      <input data-field="reps" data-ex="${exIndex}" data-set="${setIndex}" type="number" inputmode="numeric" value="${set.reps}" placeholder="0" />
-      <div class="rep-controls">
-        <button data-rep-minus="${exIndex}:${setIndex}">−1</button>
-        <button data-rep-plus="${exIndex}:${setIndex}">+1</button>
-        <button data-copy-set="${exIndex}:${setIndex}">Copier</button>
-      </div>
-    </label>
-    <label>RPE
-      <input data-field="rpe" data-ex="${exIndex}" data-set="${setIndex}" type="number" inputmode="decimal" min="1" max="10" value="${set.rpe}" placeholder="7" />
-    </label>
-    <button class="icon-btn danger delete-set" data-delete-set="${exIndex}:${setIndex}">✕</button>
-    <label class="set-notes">note rapide
-      <input data-field="notes" data-ex="${exIndex}" data-set="${setIndex}" value="${escapeHtml(set.notes)}" placeholder="facile, douleur, machine prise..." />
-    </label>
-  </div>`;
-}
-function bindWorkoutButtons() {
-  document.querySelectorAll("[data-field]").forEach(input => input.addEventListener("input", e => {
-    const ex = Number(e.target.dataset.ex); const set = Number(e.target.dataset.set); const field = e.target.dataset.field;
-    data.active.exercises[ex].sets[set][field] = e.target.value;
+function bindWorkoutEvents(){
+  document.querySelectorAll("[data-field]").forEach(el => el.oninput = () => {
+    const ex = data.active.exercises[Number(el.dataset.ex)];
+    const set = ex.sets[Number(el.dataset.set)];
+    set[el.dataset.field] = el.value;
     saveData();
-  }));
-  document.querySelectorAll("[data-add-set]").forEach(btn => btn.addEventListener("click", () => {
-    const ex = Number(btn.dataset.addSet);
-    const previous = data.active.exercises[ex].sets.at(-1) || emptySet();
-    data.active.exercises[ex].sets.push({ ...previous, reps: "", rpe: previous.rpe || "", notes: "" });
-    renderActiveWorkout();
-  }));
-  document.querySelectorAll("[data-rep-plus]").forEach(btn => btn.addEventListener("click", () => changeReps(btn.dataset.repPlus, 1)));
-  document.querySelectorAll("[data-rep-minus]").forEach(btn => btn.addEventListener("click", () => changeReps(btn.dataset.repMinus, -1)));
-  document.querySelectorAll("[data-copy-set]").forEach(btn => btn.addEventListener("click", () => copySet(btn.dataset.copySet)));
-  document.querySelectorAll("[data-delete-set]").forEach(btn => btn.addEventListener("click", () => deleteSet(btn.dataset.deleteSet)));
-  document.querySelectorAll("[data-remove-exercise]").forEach(btn => btn.addEventListener("click", () => {
-    data.active.exercises.splice(Number(btn.dataset.removeExercise), 1);
-    renderActiveWorkout();
-  }));
-  document.querySelectorAll("[data-replace-exercise]").forEach(btn => btn.addEventListener("click", () => replaceExercise(Number(btn.dataset.replaceExercise))));
+  });
+  document.querySelectorAll("[data-step]").forEach(btn => btn.onclick = () => {
+    const [field, delta] = btn.dataset.step.split(":");
+    const set = data.active.exercises[Number(btn.dataset.ex)].sets[Number(btn.dataset.set)];
+    const next = Math.max(0, number(set[field]) + Number(delta));
+    set[field] = field === "weight" ? String(Number(next.toFixed(1))) : String(Math.round(next));
+    renderAll();
+  });
+  document.querySelectorAll("[data-add-set]").forEach(btn => btn.onclick = () => {
+    const ex = data.active.exercises[Number(btn.dataset.addSet)];
+    const last = ex.sets[ex.sets.length-1] || emptySet();
+    ex.sets.push({ ...emptySet(), weight:last.weight || "", reps:last.reps || "" });
+    renderAll();
+    startTimer();
+  });
+  document.querySelectorAll("[data-copy-set]").forEach(btn => btn.onclick = () => {
+    const ex = data.active.exercises[Number(btn.dataset.copySet)];
+    ex.sets.push({ ...(ex.sets[ex.sets.length-1] || emptySet()) });
+    renderAll();
+  });
+  document.querySelectorAll("[data-delete-set]").forEach(btn => btn.onclick = () => {
+    const [exI,setI] = btn.dataset.deleteSet.split(":").map(Number);
+    const ex = data.active.exercises[exI];
+    if(ex.sets.length > 1) ex.sets.splice(setI,1); else ex.sets[0] = emptySet();
+    renderAll();
+  });
+  document.querySelectorAll("[data-delete-ex]").forEach(btn => btn.onclick = () => { data.active.exercises.splice(Number(btn.dataset.deleteEx),1); renderAll(); });
+  document.querySelectorAll("[data-replace-ex]").forEach(btn => btn.onclick = () => replaceExercise(Number(btn.dataset.replaceEx)));
 }
-function changeReps(code, delta) {
-  const [ex, set] = code.split(":").map(Number);
-  const current = Number(data.active.exercises[ex].sets[set].reps || 0);
-  data.active.exercises[ex].sets[set].reps = Math.max(0, current + delta);
-  renderActiveWorkout();
-}
-function copySet(code) {
-  const [ex, set] = code.split(":").map(Number);
-  const copied = { ...data.active.exercises[ex].sets[set] };
-  data.active.exercises[ex].sets.splice(set + 1, 0, copied);
-  renderActiveWorkout();
-}
-function deleteSet(code) {
-  const [ex, set] = code.split(":").map(Number);
-  if (data.active.exercises[ex].sets.length === 1) {
-    data.active.exercises[ex].sets[0] = emptySet();
-  } else {
-    data.active.exercises[ex].sets.splice(set, 1);
-  }
-  renderActiveWorkout();
-}
-function replaceExercise(exIndex) {
-  const old = data.active.exercises[exIndex];
-  const sameGroup = EXERCISES[old.type] || Object.values(EXERCISES).flat();
-  const choice = prompt(`Remplacer ${old.name} par :\n${sameGroup.join("\n")}`);
-  if (!choice) return;
-  const found = Object.values(EXERCISES).flat().find(e => e.toLowerCase() === choice.trim().toLowerCase());
-  if (!found) return toast("Exercice non reconnu. Utilise le nom exact affiché.");
-  data.active.exercises[exIndex].name = found;
-  data.active.exercises[exIndex].type = groupOfExercise(found);
-  renderActiveWorkout();
-}
-function populateExerciseSelectors() {
-  const groupSelect = $("addGroup");
-  groupSelect.innerHTML = Object.keys(EXERCISES).map(g => `<option value="${g}">${g}</option>`).join("");
-  groupSelect.onchange = updateAddExerciseOptions;
-  updateAddExerciseOptions();
-}
-function updateAddExerciseOptions() {
-  const group = $("addGroup").value || Object.keys(EXERCISES)[0];
-  $("addExercise").innerHTML = EXERCISES[group].map(e => `<option value="${e}">${exerciseIcon(e)} ${e}</option>`).join("");
-}
-$("addExerciseBtn").addEventListener("click", () => {
-  if (!data.active) return toast("Lance d'abord une séance.");
-  const name = $("addExercise").value;
-  data.active.exercises.push({ name, type: groupOfExercise(name), sets: [emptySet()] });
-  renderActiveWorkout();
-});
-$("saveWorkout").addEventListener("click", () => {
-  if (!data.active) return toast("Aucune séance à enregistrer.");
-  const cleaned = cleanSession(data.active);
-  if (!cleaned.exercises.length) return toast("Ajoute au moins une série remplie.");
-  data.sessions.unshift({ ...cleaned, endedAt: new Date().toISOString() });
-  updateRecordsFromSession(cleaned);
-  data.active = null;
-  resetTimer();
+function replaceExercise(index){
+  const current = data.active.exercises[index];
+  const sameGroup = EXERCISES[current.type] || allExercises();
+  const choice = prompt(`Remplacer ${current.name}. Copie/colle un nom :\n\n${sameGroup.join("\n")}`);
+  if(!choice) return;
+  const found = allExercises().find(e => e.toLowerCase() === choice.trim().toLowerCase());
+  if(!found){ toast("Exercice non trouvé"); return; }
+  current.name = found;
+  current.type = groupOf(found);
   renderAll();
-  showPage("tracking");
-  toast("Séance enregistrée");
-});
-$("cancelWorkout").addEventListener("click", () => {
-  data.active = null; resetTimer(); renderAll(); toast("Séance annulée");
-});
-function cleanSession(session) {
-  const exercises = session.exercises.map(ex => ({
-    ...ex,
-    sets: ex.sets.map(s => ({ weight: Number(s.weight || 0), reps: Number(s.reps || 0), rpe: Number(s.rpe || 0), notes: s.notes || "" }))
-      .filter(s => s.weight > 0 || s.reps > 0 || s.rpe > 0 || s.notes)
-  })).filter(ex => ex.sets.length);
-  return { ...session, exercises };
 }
-function updateRecordsFromSession(session) {
-  session.exercises.forEach(ex => ex.sets.forEach(s => {
-    const rec = data.records[ex.name] || { weight: 0, reps: 0 };
-    rec.weight = Math.max(rec.weight || 0, Number(s.weight || 0));
-    rec.reps = Math.max(rec.reps || 0, Number(s.reps || 0));
-    data.records[ex.name] = rec;
-  }));
+
+// --- AJOUT EXERCICE ---
+function renderAddExerciseSelects(){
+  $("addGroup").innerHTML = Object.keys(EXERCISES).map(g=>`<option value="${g}">${g}</option>`).join("");
+  updateAddExerciseList();
 }
+function updateAddExerciseList(){
+  const g = $("addGroup").value || Object.keys(EXERCISES)[0];
+  $("addExercise").innerHTML = EXERCISES[g].map(e=>`<option value="${e}">${icon(e)} ${e}</option>`).join("");
+}
+$("addGroup").addEventListener("change", updateAddExerciseList);
+$("addExercise").addEventListener("click", updateAddExerciseList);
+$("addExercise").addEventListener("change", updateAddExerciseList);
+$("addExercise").addEventListener("input", updateAddExerciseList);
+$("addExercise").addEventListener("blur", updateAddExerciseList);
+$("addExercise").addEventListener("focus", updateAddExerciseList);
+$("addExercise").addEventListener("keydown", updateAddExerciseList);
+$("addExercise").addEventListener("keyup", updateAddExerciseList);
+$("addExercise").addEventListener("mousedown", updateAddExerciseList);
+$("addExercise").addEventListener("touchstart", updateAddExerciseList);
+$("addExercise").addEventListener("pointerdown", updateAddExerciseList);
+$("addExercise").addEventListener("pointerup", updateAddExerciseList);
+$("addExercise").addEventListener("mouseup", updateAddExerciseList);
+$("addExercise").addEventListener("touchend", updateAddExerciseList);
+$("addExercise").addEventListener("select", updateAddExerciseList);
+$("addExercise").addEventListener("search", updateAddExerciseList);
+$("addExercise").addEventListener("paste", updateAddExerciseList);
+$("addExercise").addEventListener("cut", updateAddExerciseList);
+$("addExercise").addEventListener("compositionend", updateAddExerciseList);
+$("addExercise").addEventListener("animationend", updateAddExerciseList);
+$("addExercise").addEventListener("transitionend", updateAddExerciseList);
+$("addExercise").addEventListener("wheel", updateAddExerciseList);
+$("addExercise").addEventListener("scroll", updateAddExerciseList);
+$("addExercise").addEventListener("drag", updateAddExerciseList);
+$("addExercise").addEventListener("drop", updateAddExerciseList);
+$("addExercise").addEventListener("dragend", updateAddExerciseList);
+$("addExercise").addEventListener("dragstart", updateAddExerciseList);
+$("addExercise").addEventListener("dragover", updateAddExerciseList);
+$("addExercise").addEventListener("dragleave", updateAddExerciseList);
+$("addExercise").addEventListener("dragenter", updateAddExerciseList);
+function addSelectedExercise(){
+  if(!data.active){ toast("Lance d'abord une séance"); return; }
+  const name = $("addExercise").value;
+  data.active.exercises.push({ id:safeId(), name, type:groupOf(name), sets:[emptySet()] });
+  renderAll();
+}
+$("addExercise").closest(".inline-form").querySelector("button").addEventListener("click", addSelectedExercise);
 
 // --- MINUTEUR ---
-function formatTimer(sec) {
-  const m = String(Math.floor(sec / 60)).padStart(2, "0");
-  const s = String(sec % 60).padStart(2, "0");
-  return `${m}:${s}`;
-}
-function renderTimer() { $("timerDisplay").textContent = formatTimer(timerRemaining); }
-function resetTimer() { clearInterval(timerInterval); timerInterval = null; timerRemaining = Number(data.settings.restSeconds || 90); renderTimer(); }
-$("timerStart").addEventListener("click", () => {
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; return; }
-  timerInterval = setInterval(() => {
-    timerRemaining = Math.max(0, timerRemaining - 1); renderTimer();
-    if (timerRemaining === 0) { clearInterval(timerInterval); timerInterval = null; toast("Repos terminé"); }
-  }, 1000);
-});
+function timerText(sec){ const m=String(Math.floor(sec/60)).padStart(2,"0"); const s=String(sec%60).padStart(2,"0"); return `${m}:${s}`; }
+function renderTimer(){ $("timerDisplay").textContent = timerText(timerRemaining); }
+function startTimer(){ stopTimer(); timerInterval = setInterval(()=>{ timerRemaining = Math.max(0,timerRemaining-1); renderTimer(); if(timerRemaining===0) stopTimer(); },1000); $("timerToggle").textContent="⏸"; }
+function stopTimer(){ clearInterval(timerInterval); timerInterval=null; $("timerToggle").textContent="▶"; }
+function resetTimer(){ stopTimer(); timerRemaining = data.settings.restSeconds || 90; renderTimer(); }
+$("timerToggle").addEventListener("click", () => timerInterval ? stopTimer() : startTimer());
 $("timerReset").addEventListener("click", resetTimer);
 
-// --- STATS, HISTORIQUE, RECORDS ---
-function renderStats() {
-  const sessions = data.sessions;
-  $("statSessions").textContent = sessions.length;
-  const weekStart = daysAgo(7);
-  const weekSessions = sessions.filter(s => new Date(s.startedAt) >= weekStart);
-  $("statWeekSets").textContent = sum(weekSessions.flatMap(s => s.exercises).map(e => e.sets.length));
-  const home = sessions.filter(s => s.place === "home").length;
-  const gym = sessions.filter(s => s.place === "gym").length;
-  $("statHomeGym").textContent = `${home} / ${gym}`;
-  $("statLast").textContent = sessions[0] ? dateShort(sessions[0].startedAt) : "—";
+// --- FIN DE SÉANCE ---
+function prepareFinishedSession(){
+  if(!data.active) return null;
+  const s = deepClone(data.active);
+  s.endedAt = new Date().toISOString();
+  s.summary = buildSessionSummary(s);
+  return s;
 }
-function renderRecords() {
-  const entries = Object.entries(data.records).sort((a,b) => a[0].localeCompare(b[0]));
-  $("recordsList").innerHTML = entries.length ? entries.map(([name, r]) => `<div class="record-item"><strong>${exerciseIcon(name)} ${name}</strong><br><span class="muted">${r.weight ? `${r.weight} kg` : "— kg"} · ${r.reps ? `${r.reps} reps` : "— reps"}</span></div>`).join("") : `<p class="muted">Aucun record.</p>`;
+function buildSessionSummary(s){
+  const volume = sessionVolume(s);
+  const sets = sessionSets(s);
+  const reps = sessionReps(s);
+  const rpes = s.exercises.flatMap(e=>e.sets.map(set=>set.rpe));
+  const pains = s.exercises.flatMap(e=>e.sets.map(set=>set.pain));
+  const avgRpe = avg(rpes);
+  const avgPain = avg(pains);
+  const durationMin = Math.max(1, Math.round((new Date(s.endedAt) - new Date(s.startedAt)) / 60000));
+  const prs = findPotentialRecords(s);
+  return { volume, sets, reps, avgRpe, avgPain, durationMin, prs };
 }
-function renderHistory() {
-  $("historyList").innerHTML = data.sessions.length ? data.sessions.map(s => {
-    const sets = sum(s.exercises.map(e => e.sets.length));
-    const volume = sessionVolume(s);
-    return `<div class="history-item">
-      <strong>${s.templateName}</strong> <span class="pill ${s.place === "home" ? "home-pill" : "gym-pill"}">${placeLabel(s.place)}</span>
-      <p class="muted">${dateShort(s.startedAt)} · ${sets} séries · volume ${Math.round(volume)} kg</p>
-      <details><summary>Voir les exercices</summary>${s.exercises.map(e => `<p>${exerciseIcon(e.name)} <strong>${e.name}</strong> : ${e.sets.map(set => `${set.weight || 0}kg x ${set.reps || 0}${set.rpe ? ` RPE ${set.rpe}` : ""}`).join(" · ")}</p>`).join("")}</details>
-    </div>`;
-  }).join("") : `<p class="muted">Aucune séance enregistrée pour l'instant.</p>`;
+function findPotentialRecords(s){
+  const out = [];
+  s.exercises.forEach(ex => ex.sets.forEach(set => {
+    const rec = data.records[ex.name] || { weight:0, reps:0 };
+    if(number(set.weight) > (rec.weight || 0)) out.push(`${ex.name} : nouveau poids ${set.weight} kg`);
+    if(number(set.reps) > (rec.reps || 0) && number(set.weight) === 0) out.push(`${ex.name} : nouveau record ${set.reps} reps`);
+  }));
+  return [...new Set(out)];
 }
-function sessionVolume(s) { return sum(s.exercises.flatMap(e => e.sets).map(set => Number(set.weight || 0) * Number(set.reps || 0))); }
-function escapeHtml(str = "") { return String(str).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c])); }
+function renderFinishModal(session){
+  const sum = session.summary;
+  const nutrition = nutritionAdviceFor(session);
+  const next = nextSessionAdvice(session);
+  $("finishSummary").innerHTML = `
+    <div class="summary-grid">
+      <div class="summary-box"><strong>${Math.round(sum.durationMin)} min</strong><span class="muted">durée</span></div>
+      <div class="summary-box"><strong>${sum.sets}</strong><span class="muted">séries</span></div>
+      <div class="summary-box"><strong>${Math.round(sum.volume).toLocaleString("fr-FR")}</strong><span class="muted">kg x reps</span></div>
+      <div class="summary-box"><strong>${sum.avgRpe ? sum.avgRpe.toFixed(1) : "—"}</strong><span class="muted">RPE moyen</span></div>
+    </div>
+    ${sum.prs.length ? `<div class="advice"><strong>🏆 Records possibles</strong><p class="muted">${sum.prs.join("<br>")}</p></div>` : `<div class="advice"><strong>👍 Séance validée</strong><p class="muted">Pas forcément de record, mais la régularité construit la prise de masse.</p></div>`}
+    <div class="advice"><strong>🍽️ Après cette séance</strong><p class="muted">${nutrition}</p></div>
+    <div class="advice"><strong>📈 Prochaine fois</strong><p class="muted">${next}</p></div>
+    ${sum.avgPain >= 2 ? `<div class="warning">Douleur moyenne ${sum.avgPain.toFixed(1)}/5 : évite d'augmenter la charge sur les exercices concernés à la prochaine séance.</div>` : ``}
+  `;
+  $("finishModal").classList.remove("hidden");
+}
+function finishWorkout(){
+  if(!data.active){ toast("Aucune séance active"); return; }
+  pendingFinishedSession = prepareFinishedSession();
+  renderFinishModal(pendingFinishedSession);
+}
+function saveFinishedWorkout(){
+  if(!pendingFinishedSession) return;
+  updateRecords(pendingFinishedSession);
+  data.sessions.unshift(pendingFinishedSession);
+  data.active = null;
+  pendingFinishedSession = null;
+  $("finishModal").classList.add("hidden");
+  resetTimer();
+  renderAll();
+  showPage("nutrition");
+  toast("Séance enregistrée");
+}
+function updateRecords(s){
+  s.exercises.forEach(ex => ex.sets.forEach(set => {
+    const w = number(set.weight), r = number(set.reps);
+    if(!data.records[ex.name]) data.records[ex.name] = { weight:0, reps:0 };
+    if(w > data.records[ex.name].weight) data.records[ex.name].weight = w;
+    if(w === 0 && r > data.records[ex.name].reps) data.records[ex.name].reps = r;
+    if(w > 0 && r > data.records[ex.name].reps && ex.name === "Tractions") data.records[ex.name].reps = r;
+  }));
+}
+$("finishWorkout").addEventListener("click", finishWorkout);
+$("saveFinishedWorkout").addEventListener("click", saveFinishedWorkout);
+$("returnWorkout").addEventListener("click", () => $("finishModal").classList.add("hidden"));
+$("closeModal").addEventListener("click", () => $("finishModal").classList.add("hidden"));
+$("cancelWorkout").addEventListener("click", () => { if(confirm("Annuler la séance en cours ?")){ data.active=null; renderAll(); }});
 
-// --- GRAPHIQUES AVEC FILTRES ---
-function renderFilters() {
-  const allExercises = [...new Set([...Object.values(EXERCISES).flat(), ...data.sessions.flatMap(s => s.exercises.map(e => e.name))])].sort();
-  const current = $("exerciseFilter").value;
-  $("exerciseFilter").innerHTML = `<option value="all">Tous les exercices</option>` + allExercises.map(e => `<option value="${e}">${exerciseIcon(e)} ${e}</option>`).join("");
-  if (current) $("exerciseFilter").value = current;
+// --- NUTRITION ---
+function nutritionAdviceFor(session){
+  const place = session.place;
+  const type = session.type;
+  const intense = session.summary.volume > 9000 || session.summary.avgRpe >= 8 || type === "Jambes";
+  if(place === "gym" && intense) return "Séance exigeante : vise un vrai repas dans les 1 à 2 h avec protéines + glucides. Exemple : poulet/riz/légumes, œufs + pain complet + fruit, ou skyr + avoine + banane si tu veux rapide.";
+  if(place === "gym") return "Séance salle : prends une source de protéines et des glucides. L'objectif prise de masse est d'éviter de finir la journée trop bas en calories.";
+  if(type === "Abdos" || session.duration <= 25) return "Séance courte : si ton prochain repas arrive bientôt, pas besoin de forcer. Sinon, collation simple : skyr/fromage blanc + fruit, ou œufs + pain complet.";
+  return "Séance maison : garde le réflexe protéines + glucides, même en portion modérée. Exemple : fromage blanc + banane + flocons d'avoine.";
 }
-["metricFilter", "exerciseFilter", "placeFilter", "periodFilter"].forEach(id => $(id).addEventListener("change", renderCharts));
-function filteredSessions() {
-  const place = $("placeFilter")?.value || "all";
-  const since = daysAgo($("periodFilter")?.value || 9999);
+function nextSessionAdvice(session){
+  const lines = [];
+  session.exercises.slice(0,3).forEach(ex => {
+    const best = Math.max(...ex.sets.map(s=>number(s.weight)));
+    const rpe = avg(ex.sets.map(s=>s.rpe));
+    const pain = avg(ex.sets.map(s=>s.pain));
+    if(pain >= 2) lines.push(`${ex.name} : garde léger ou remplace, douleur signalée.`);
+    else if(best && rpe && rpe <= 7) lines.push(`${ex.name} : tu peux tenter +2,5 kg si la technique reste propre.`);
+    else if(best && rpe >= 8.5) lines.push(`${ex.name} : garde la même charge, priorité qualité.`);
+    else lines.push(`${ex.name} : vise au moins la même performance.`);
+  });
+  return lines.join("<br>") || "Prochaine séance : régularité, technique propre et légère progression si tu te sens bien.";
+}
+function renderNutrition(){
+  if(data.settings.bodyWeight) $("bodyWeight").value = data.settings.bodyWeight;
+  updateProteinResult();
+  const last = data.sessions[0];
+  const advice = last ? nutritionAdviceFor(last) : "Après une séance prise de masse : prends une source de protéines et des glucides. Si la séance est lourde, privilégie un vrai repas plutôt qu'une petite collation.";
+  $("postWorkoutAdvice").innerHTML = `
+    <div class="advice"><strong>Conseil principal</strong><p class="muted">${advice}</p></div>
+    <div class="advice"><strong>Repère simple</strong><p class="muted">Sur la journée, vise environ 1,6 à 2,0 g de protéines par kg de poids de corps, avec assez de glucides pour tenir tes séances.</p></div>
+    <div class="advice"><strong>Le piège en prise de masse</strong><p class="muted">Ne pas assez manger après les grosses séances, surtout jambes ou full body. La progression vient de l'entraînement + récupération + alimentation.</p></div>`;
+}
+function updateProteinResult(){
+  const w = number($("bodyWeight").value || data.settings.bodyWeight);
+  if(!w){ $("proteinResult").textContent = "Indique ton poids pour obtenir une cible."; return; }
+  $("proteinResult").textContent = `Cible simple : ${Math.round(w*1.6)} à ${Math.round(w*2.0)} g de protéines/jour.`;
+}
+$("saveWeight").addEventListener("click", () => { data.settings.bodyWeight = $("bodyWeight").value; saveData(); updateProteinResult(); toast("Poids enregistré"); });
+$("bodyWeight").addEventListener("input", updateProteinResult);
+
+// --- SUIVI / HISTORIQUE / GRAPHIQUES NATIFS ---
+function renderTracking(){
+  renderFilters(); renderRecords(); renderHistory(); drawProgressChart();
+}
+function renderFilters(){
+  const current = $("exerciseFilter").value;
+  $("exerciseFilter").innerHTML = `<option value="all">Tous les exercices</option>` + allExercises().map(e=>`<option value="${e}">${e}</option>`).join("");
+  if(current) $("exerciseFilter").value = current;
+}
+["metricFilter","exerciseFilter","placeFilter","periodFilter"].forEach(id => $(id).addEventListener("change", drawProgressChart));
+function renderRecords(){
+  const entries = Object.entries(data.records).sort((a,b)=>a[0].localeCompare(b[0],"fr"));
+  $("recordsList").innerHTML = entries.length ? entries.map(([name,r]) => `<div class="record-row"><strong>${icon(name)} ${name}</strong><p class="muted">${r.weight ? `${r.weight} kg` : "—"}${r.weight && r.reps ? " · " : ""}${r.reps ? `${r.reps} reps` : ""}</p></div>`).join("") : `<div class="empty">Aucun record.</div>`;
+}
+function renderHistory(){
+  if(!data.sessions.length){ $("historyList").innerHTML = `<div class="empty">Aucune séance enregistrée.</div>`; return; }
+  $("historyList").innerHTML = data.sessions.map(s => `<article class="history-item">
+    <div class="section-title"><div><h3>${s.templateName}</h3><p class="muted">${fmtDate(s.startedAt)} · ${placeLabel(s.place)} · ${sessionSets(s)} séries · ${Math.round(sessionVolume(s)).toLocaleString("fr-FR")} kg x reps</p></div><span class="pill ${s.place==='home'?'home-pill':'gym-pill'}">${placeLabel(s.place)}</span></div>
+    <details><summary>Détail</summary>${s.exercises.map(e=>`<p class="muted">${icon(e.name)} <strong>${e.name}</strong> — ${e.sets.map((set,i)=>`S${i+1}: ${set.weight||0}kg x ${set.reps||0}, RPE ${set.rpe||"—"}, douleur ${set.pain||0}/5`).join(" · ")}</p>`).join("")}</details>
+  </article>`).join("");
+}
+function filteredSessions(){
+  const place = $("placeFilter").value;
+  const since = daysAgo($("periodFilter").value);
   return data.sessions.filter(s => new Date(s.startedAt) >= since && (place === "all" || s.place === place)).slice().reverse();
 }
-function sessionMetricForExercise(session, exerciseName, metric) {
-  const exercises = exerciseName === "all" ? session.exercises : session.exercises.filter(e => e.name === exerciseName);
-  const sets = exercises.flatMap(e => e.sets);
-  if (!sets.length) return null;
-  if (metric === "bestWeight") return Math.max(...sets.map(s => Number(s.weight || 0)));
-  if (metric === "maxReps") return Math.max(...sets.map(s => Number(s.reps || 0)));
-  if (metric === "volume") return sum(sets.map(s => Number(s.weight || 0) * Number(s.reps || 0)));
-  if (metric === "sets") return sets.length;
-  if (metric === "avgRpe") {
-    const rpes = sets.map(s => Number(s.rpe || 0)).filter(Boolean);
-    return rpes.length ? Number((sum(rpes) / rpes.length).toFixed(1)) : null;
-  }
+function metricForSession(s, metric, exercise){
+  let exercises = s.exercises;
+  if(exercise !== "all") exercises = exercises.filter(e => e.name === exercise);
+  const sets = exercises.flatMap(e=>e.sets.map(set=>({ ...set, ex:e })));
+  if(!sets.length) return null;
+  if(metric === "bestWeight") return Math.max(...sets.map(set=>number(set.weight)));
+  if(metric === "maxReps") return Math.max(...sets.map(set=>number(set.reps)));
+  if(metric === "volume") return sets.reduce((t,set)=>t+setVolume(set),0);
+  if(metric === "sets") return sets.length;
+  if(metric === "avgRpe") return avg(sets.map(s=>s.rpe));
+  if(metric === "pain") return avg(sets.map(s=>s.pain));
   return null;
 }
-function metricLabel(metric) {
-  return { bestWeight: "Meilleur poids", maxReps: "Max répétitions", volume: "Volume kg x reps", sets: "Nombre de séries", avgRpe: "RPE moyen" }[metric] || metric;
+function drawProgressChart(){
+  const metric = $("metricFilter").value;
+  const exercise = $("exerciseFilter").value || "all";
+  const points = filteredSessions().map(s => ({ label:fmtDate(s.startedAt), value:metricForSession(s,metric,exercise) })).filter(p => p.value !== null && p.value > 0);
+  $("chartHint").textContent = points.length ? `${points.length} point(s) exploitable(s).` : "Pas encore assez de données pour ce filtre.";
+  drawLineCanvas("progressCanvas", points, metricLabel(metric));
 }
-function renderCharts() {
-  if (!window.Chart) return;
-  renderHomeChart();
-  renderProgressChart();
-  renderVolumeChart();
+function drawHomeChart(){
+  const points = data.sessions.slice(0,8).reverse().map(s => ({ label:fmtDate(s.startedAt), value:sessionVolume(s) }));
+  drawLineCanvas("homeCanvas", points, "Volume");
 }
-function chartDestroy(name) { if (charts[name]) { charts[name].destroy(); charts[name] = null; } }
-function renderHomeChart() {
-  const canvas = $("homeChart"); if (!canvas || !window.Chart) return;
-  chartDestroy("home");
-  const last = data.sessions.slice(0, 8).reverse();
-  charts.home = new Chart(canvas, { type: "bar", data: { labels: last.map(s => dateShort(s.startedAt)), datasets: [{ label: "Volume", data: last.map(sessionVolume) }] }, options: baseChartOptions() });
-}
-function renderProgressChart() {
-  const canvas = $("progressChart"); if (!canvas || !window.Chart) return;
-  chartDestroy("progress");
-  const metric = $("metricFilter")?.value || "bestWeight";
-  const exercise = $("exerciseFilter")?.value || "all";
-  const rows = filteredSessions().map(s => ({ x: dateShort(s.startedAt), y: sessionMetricForExercise(s, exercise, metric) })).filter(r => r.y !== null && !Number.isNaN(r.y));
-  $("chartHint").textContent = rows.length ? `${rows.length} point(s) affiché(s). Les séances sans donnée exploitable sont ignorées.` : "Pas encore assez de données pour ce filtre.";
-  charts.progress = new Chart(canvas, { type: metric === "sets" ? "bar" : "line", data: { labels: rows.map(r => r.x), datasets: [{ label: metricLabel(metric), data: rows.map(r => r.y), tension: .32 }] }, options: baseChartOptions() });
-}
-function renderVolumeChart() {
-  const canvas = $("volumeChart"); if (!canvas || !window.Chart) return;
-  chartDestroy("volume");
-  const totals = {};
-  filteredSessions().forEach(s => s.exercises.forEach(e => {
-    totals[e.type] = (totals[e.type] || 0) + sum(e.sets.map(set => Number(set.weight || 0) * Number(set.reps || 0)));
-  }));
-  charts.volume = new Chart(canvas, { type: "bar", data: { labels: Object.keys(totals), datasets: [{ label: "Volume", data: Object.values(totals) }] }, options: baseChartOptions() });
-}
-function baseChartOptions() {
-  return { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#d1d5db" } } }, scales: { x: { ticks: { color: "#9ca3af" }, grid: { color: "rgba(255,255,255,.06)" } }, y: { ticks: { color: "#9ca3af" }, grid: { color: "rgba(255,255,255,.06)" } } } };
+function metricLabel(m){ return ({bestWeight:"kg", maxReps:"reps", volume:"kg x reps", sets:"séries", avgRpe:"RPE", pain:"douleur"})[m] || m; }
+function drawLineCanvas(id, points, label){
+  const canvas = $(id); const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1; const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.max(320, rect.width) * dpr; canvas.height = Number(canvas.getAttribute("height")) * dpr;
+  ctx.scale(dpr,dpr); const w=canvas.width/dpr, h=canvas.height/dpr;
+  ctx.clearRect(0,0,w,h); ctx.fillStyle = "rgba(255,255,255,.02)"; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle = "rgba(255,255,255,.12)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(34,12); ctx.lineTo(34,h-28); ctx.lineTo(w-10,h-28); ctx.stroke();
+  ctx.fillStyle = "#93a8c3"; ctx.font = "12px -apple-system, BlinkMacSystemFont, Segoe UI"; ctx.fillText(label, 8, 18);
+  if(points.length === 0){ ctx.fillStyle="#93a8c3"; ctx.fillText("Aucune donnée", 44, h/2); return; }
+  const max = Math.max(...points.map(p=>p.value), 1); const min = Math.min(...points.map(p=>p.value), 0);
+  const xFor = i => points.length === 1 ? w/2 : 44 + i * ((w-64)/(points.length-1));
+  const yFor = v => (h-34) - ((v-min)/(max-min || 1)) * (h-56);
+  ctx.strokeStyle = "#61e6a7"; ctx.lineWidth = 3; ctx.beginPath();
+  points.forEach((p,i)=>{ const x=xFor(i), y=yFor(p.value); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }); ctx.stroke();
+  points.forEach((p,i)=>{ const x=xFor(i), y=yFor(p.value); ctx.fillStyle="#61e6a7"; ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill(); });
+  ctx.fillStyle="#eef6ff"; const last=points[points.length-1]; ctx.fillText(String(Math.round(last.value*10)/10), xFor(points.length-1)-18, yFor(last.value)-10);
 }
 
 // --- DÉFIS ---
-function challengeProgress(challenge = data.challenge) {
-  const since = new Date(challenge.startedAt || new Date());
-  const until = new Date(since); until.setDate(until.getDate() + Number(challenge.days || 7));
-  const relevant = data.sessions.filter(s => new Date(s.startedAt) >= since && new Date(s.startedAt) <= until);
+function challengeProgress(ch){
+  const since = new Date(ch.startedAt || new Date());
+  const relevant = data.sessions.filter(s => new Date(s.startedAt) >= since);
   let value = 0;
-  if (challenge.metric === "sessions") value = relevant.filter(s => !challenge.place || s.place === challenge.place).length;
-  if (challenge.metric === "sets") value = sum(relevant.flatMap(s => s.exercises).filter(e => matchChallengeExercise(e, challenge)).map(e => e.sets.length));
-  if (challenge.metric === "reps") value = sum(relevant.flatMap(s => s.exercises).filter(e => matchChallengeExercise(e, challenge)).flatMap(e => e.sets).map(s => Number(s.reps || 0)));
-  if (challenge.metric === "volume") value = sum(relevant.flatMap(s => s.exercises).flatMap(e => e.sets).map(set => Number(set.weight || 0) * Number(set.reps || 0)));
-  return { value, target: challenge.target, percent: Math.min(100, Math.round((value / challenge.target) * 100)) };
+  if(ch.metric === "sessions") value = relevant.filter(s => !ch.place || s.place === ch.place).length;
+  if(ch.metric === "sets") value = relevant.reduce((t,s)=>t+s.exercises.filter(e=>!ch.type || e.type===ch.type).reduce((a,e)=>a+e.sets.length,0),0);
+  if(ch.metric === "reps") value = relevant.reduce((t,s)=>t+s.exercises.filter(e=>e.name===ch.exercise).reduce((a,e)=>a+e.sets.reduce((x,set)=>x+number(set.reps),0),0),0);
+  if(ch.metric === "volume") value = relevant.reduce((t,s)=>t+sessionVolume(s),0);
+  if(ch.metric === "lowPainSessions") value = relevant.filter(s => avg(s.exercises.flatMap(e=>e.sets.map(set=>set.pain))) < 2).length;
+  if(ch.metric === "nutritionViews") value = data.counters.nutritionViews || 0;
+  return { value, pct: Math.min(100, Math.round((value/ch.target)*100)) };
 }
-function matchChallengeExercise(ex, c) {
-  if (c.exercise) return ex.name === c.exercise;
-  if (c.exercises) return c.exercises.includes(ex.name);
-  if (c.type) return ex.type === c.type;
-  return true;
+function renderChallenge(){
+  const ch = data.challenge;
+  const pr = challengeProgress(ch);
+  $("challengeTitle").textContent = ch.name;
+  $("challengeDesc").textContent = ch.desc;
+  $("challengeBar").style.width = `${pr.pct}%`;
+  $("challengeProgressText").textContent = `${Math.round(pr.value).toLocaleString("fr-FR")} / ${ch.target} · ${pr.pct}%`;
+  $("challengeList").innerHTML = CHALLENGES.map(c => `<div class="challenge-card"><h3>${c.name}</h3><p class="muted">${c.desc}</p><button class="primary small" data-challenge="${c.id}">Choisir</button></div>`).join("");
+  document.querySelectorAll("[data-challenge]").forEach(btn => btn.onclick = () => { data.challenge = { ...CHALLENGES.find(c=>c.id===btn.dataset.challenge), startedAt:new Date().toISOString(), finished:false }; renderAll(); toast("Défi choisi"); });
 }
-function renderChallenge() {
-  const c = data.challenge;
-  const p = challengeProgress(c);
-  $("challengeTitle").textContent = c.name;
-  $("challengeDescription").textContent = c.desc;
-  $("challengeProgress").style.width = `${p.percent}%`;
-  $("challengeStatus").textContent = `${p.value} / ${p.target} · ${p.percent}%`;
-  $("challengeList").innerHTML = CHALLENGES.map(ch => `<div class="challenge-card"><strong>${ch.name}</strong><p class="muted">${ch.desc}</p><button data-pick-challenge="${ch.id}">Choisir</button></div>`).join("");
-  document.querySelectorAll("[data-pick-challenge]").forEach(btn => btn.addEventListener("click", () => pickChallenge(btn.dataset.pickChallenge)));
-}
-function pickChallenge(id) {
-  const c = CHALLENGES.find(x => x.id === id);
-  data.challenge = { ...c, startedAt: new Date().toISOString(), finished: false };
-  renderAll(); toast("Défi lancé");
-}
-$("randomChallenge").addEventListener("click", () => pickChallenge(CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)].id));
-$("finishChallenge").addEventListener("click", () => { data.challenge.finished = true; renderAll(); toast("Défi marqué terminé"); });
+$("randomChallenge").addEventListener("click", () => { const c = CHALLENGES[Math.floor(Math.random()*CHALLENGES.length)]; data.challenge = { ...c, startedAt:new Date().toISOString(), finished:false }; renderAll(); });
+$("finishChallenge").addEventListener("click", () => { data.challenge.finished = true; saveData(); toast("Défi terminé"); });
 
-// --- MODE BLESSURE ---
-function renderInjury() {
-  $("injurySelect").value = data.settings.injury || "none";
-  const key = data.settings.injury;
-  if (key === "none") { $("injuryAdvice").innerHTML = `<p class="muted">Aucune substitution active.</p>`; return; }
-  const info = INJURY_SUBS[key];
-  $("injuryAdvice").innerHTML = `<h3>${info.label}</h3><p class="muted">À éviter ou surveiller : ${info.avoid.join(", ")}</p><div>${Object.entries(info.subs).map(([a,b]) => `<p>• ${a} → <strong>${b}</strong></p>`).join("")}</div>`;
+// --- DOULEUR / PRUDENCE ---
+function renderSafety(){
+  $("injurySelect").value = data.settings.injury;
+  const inj = data.settings.injury;
+  if(inj === "none") { $("injuryAdvice").innerHTML = `<div class="advice"><strong>Rien à signaler</strong><p class="muted">Garde une technique propre, échauffe les épaules et évite de courir après les records si tu es fatigué.</p></div>`; return; }
+  const cfg = INJURY_SUBS[inj];
+  $("injuryAdvice").innerHTML = `<div class="advice"><strong>À éviter temporairement</strong><p class="muted">${cfg.avoid.join(" · ")}</p></div><div class="advice"><strong>Substitutions proposées</strong><p class="muted">${Object.entries(cfg.subs).map(([a,b])=>`${a} → ${b}`).join("<br>")}</p></div>`;
 }
-$("injurySelect").addEventListener("change", e => { data.settings.injury = e.target.value; renderAll(); toast("Mode blessure mis à jour"); });
+$("injurySelect").addEventListener("change", () => { data.settings.injury = $("injurySelect").value; renderAll(); toast("Mode prudence mis à jour"); });
 
-// --- EXPORTS / IMPORTS / RÉGLAGES ---
-function renderSettings() { $("restSeconds").value = data.settings.restSeconds || 90; }
-$("restSeconds").addEventListener("input", e => { data.settings.restSeconds = Number(e.target.value || 90); saveData(); resetTimer(); });
+// --- EXPORTS / SAUVEGARDE ---
+function download(name, text, type){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
+function exportCsv(){
+  const rows = [["date","lieu","seance","type","exercice","serie","poids","reps","rpe","douleur","notes"]];
+  data.sessions.forEach(s => s.exercises.forEach(e => e.sets.forEach((set,i) => rows.push([s.startedAt,placeLabel(s.place),s.templateName,s.type,e.name,i+1,set.weight,set.reps,set.rpe,set.pain,set.notes||""]))));
+  const csv = rows.map(r => r.map(v => `"${String(v).replaceAll('"','""')}"`).join(";")).join("\n");
+  download(`coach-sportif-historique-${today()}.csv`, csv, "text/csv;charset=utf-8");
+}
+function exportJson(){ download(`coach-sportif-sauvegarde-${today()}.json`, JSON.stringify(data,null,2), "application/json"); }
 $("exportCsv").addEventListener("click", exportCsv);
-function exportCsv() {
-  const rows = [["date", "lieu", "seance", "groupe", "exercice", "serie", "poids_kg", "reps", "rpe", "notes"]];
-  data.sessions.forEach(s => s.exercises.forEach(e => e.sets.forEach((set, i) => rows.push([s.startedAt, placeLabel(s.place), s.templateName, e.type, e.name, i + 1, set.weight, set.reps, set.rpe, set.notes || ""]))));
-  downloadFile("historique-musculation.csv", rows.map(r => r.map(v => `"${String(v).replaceAll('"','""')}"`).join(";")).join("\n"), "text/csv;charset=utf-8");
-}
-$("exportJson").addEventListener("click", () => downloadFile("sauvegarde-coach-sportif.json", JSON.stringify(data, null, 2), "application/json"));
-$("importJson").addEventListener("change", e => {
-  const file = e.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => { try { data = JSON.parse(reader.result); renderAll(); toast("Sauvegarde restaurée"); } catch { toast("Fichier non reconnu"); } };
-  reader.readAsText(file);
+$("exportJson").addEventListener("click", exportJson);
+$("backupJson").addEventListener("click", exportJson);
+$("restoreJson").addEventListener("change", async (e) => {
+  const file = e.target.files[0]; if(!file) return;
+  try{ const text = await file.text(); const restored = JSON.parse(text); data = { ...defaultData(), ...restored, settings:{...defaultData().settings, ...(restored.settings||{})} }; saveData(); renderAll(); toast("Sauvegarde restaurée"); }
+  catch(err){ toast("Fichier invalide"); }
 });
-function downloadFile(name, content, type) {
-  const blob = new Blob([content], { type });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = name; a.click(); URL.revokeObjectURL(url);
-}
-$("proteinBtn").addEventListener("click", () => {
-  const kg = Number($("bodyWeight").value || 0);
-  if (!kg) return toast("Entre ton poids.");
-  $("proteinResult").textContent = `Repère simple : ${Math.round(kg * 1.6)} à ${Math.round(kg * 2)} g de protéines par jour.`;
-});
+$("resetAll").addEventListener("click", () => { if(confirm("Supprimer toutes les données ?")){ localStorage.removeItem(STORAGE_KEY); data=defaultData(); renderAll(); toast("Données réinitialisées"); }});
 
-// --- DÉMARRAGE ---
-renderAll();
+// --- SERVICE WORKER POUR MODE INSTALLABLE / HORS LIGNE ---
+if("serviceWorker" in navigator){ window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+
+// --- INITIALISATION ---
 renderTimer();
+renderAll();

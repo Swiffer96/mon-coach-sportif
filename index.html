@@ -3,111 +3,117 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b1020" />
+  <meta name="theme-color" content="#07111f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Coach Sportif" />
-  <title>Mon Coach Sportif V3</title>
+  <meta name="apple-mobile-web-app-title" content="Coach Mass" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <title>Mon Coach Sportif V4</title>
 </head>
 <body>
-  <header class="topbar">
+  <header class="topbar safe-top">
     <div>
-      <p class="eyebrow">Coach perso · V3</p>
-      <h1>🏋️ Mon Coach Sportif</h1>
+      <p class="eyebrow">V4 · prise de masse · iPhone</p>
+      <h1>🏋️ Coach Mass</h1>
     </div>
-    <button id="openWorkoutPicker" class="primary compact">Nouvelle séance</button>
+    <button id="quickStartBtn" class="primary small">Séance</button>
   </header>
 
-  <nav class="tabs" aria-label="Navigation">
+  <nav class="tabs" aria-label="Navigation principale">
     <button class="tab active" data-page="home">Accueil</button>
     <button class="tab" data-page="workout">Séance</button>
-    <button class="tab" data-page="templates">Choisir</button>
+    <button class="tab" data-page="library">Choisir</button>
     <button class="tab" data-page="tracking">Suivi</button>
+    <button class="tab" data-page="nutrition">Nutrition</button>
     <button class="tab" data-page="challenges">Défis</button>
-    <button class="tab" data-page="injury">Blessure</button>
-    <button class="tab" data-page="settings">Réglages</button>
+    <button class="tab" data-page="safety">Douleur</button>
+    <button class="tab" data-page="settings">Sauvegarde</button>
   </nav>
 
   <main>
     <section id="home" class="page active">
       <article class="card hero">
-        <p class="eyebrow">Usage réel iPhone</p>
-        <h2>Choisis selon ton lieu, ton temps et ton énergie</h2>
-        <p class="muted">Maison 20-30 min ou salle environ 1h. Aucune séance n'est imposée par un jour de la semaine.</p>
-        <div class="segmented">
-          <button class="segment active" data-template-filter="all">Toutes</button>
-          <button class="segment" data-template-filter="home">Maison</button>
-          <button class="segment" data-template-filter="gym">Salle</button>
+        <p class="eyebrow">Objectif actuel</p>
+        <h2>Prise de masse propre</h2>
+        <p class="muted">Choisis une séance selon ton contexte : maison 20-30 min, salle environ 1h. L'app te guide après la séance sur quoi manger et quoi viser la prochaine fois.</p>
+        <div class="quick-actions">
+          <button class="primary" data-filter-open="home">Maison 20-30 min</button>
+          <button class="primary ghost" data-filter-open="gym">Salle 1h</button>
         </div>
-        <div id="homeTemplates" class="template-grid"></div>
       </article>
 
-      <section class="grid stats-grid">
+      <section class="stats-grid">
         <article class="card stat"><strong id="statSessions">0</strong><span>séances</span></article>
-        <article class="card stat"><strong id="statWeekSets">0</strong><span>séries cette semaine</span></article>
-        <article class="card stat"><strong id="statHomeGym">0 / 0</strong><span>maison / salle</span></article>
-        <article class="card stat"><strong id="statLast">—</strong><span>dernière séance</span></article>
+        <article class="card stat"><strong id="statWeekSets">0</strong><span>séries semaine</span></article>
+        <article class="card stat"><strong id="statWeekVolume">0</strong><span>kg x reps</span></article>
+        <article class="card stat"><strong id="statBalance">0 / 0</strong><span>maison / salle</span></article>
       </section>
 
       <article class="card">
         <div class="section-title">
           <div>
-            <h2>Vue rapide</h2>
-            <p class="muted">Volume des 8 dernières séances enregistrées.</p>
+            <h2>Prêt pour aujourd'hui ?</h2>
+            <p class="muted">Une séance efficace vaut mieux qu'un programme rigide.</p>
           </div>
         </div>
-        <canvas id="homeChart" height="130"></canvas>
+        <div id="suggestedSessions" class="template-grid"></div>
+      </article>
+
+      <article class="card">
+        <h2>Bilan rapide</h2>
+        <p class="muted">Volume des dernières séances. Graphique natif, donc lisible même hors ligne.</p>
+        <canvas id="homeCanvas" height="170"></canvas>
       </article>
     </section>
 
     <section id="workout" class="page">
-      <article class="card sticky-head">
-        <div class="workout-headline">
+      <article class="card sticky-panel">
+        <div class="workout-header">
           <div>
-            <p id="activeBadge" class="pill muted-pill">Aucune séance</p>
+            <p id="activeBadge" class="pill muted-pill">Aucune séance active</p>
             <h2 id="activeTitle">Choisis une séance</h2>
-            <p id="activeMeta" class="muted">Va dans Accueil ou Choisir pour lancer une séance.</p>
+            <p id="activeMeta" class="muted">Va dans “Choisir” ou lance une séance depuis l'accueil.</p>
           </div>
-          <div class="timer-card">
-            <span id="timerDisplay" class="timer">01:30</span>
-            <div class="timer-actions">
-              <button id="timerStart">▶</button>
+          <div class="timer-box">
+            <span id="timerDisplay">01:30</span>
+            <div class="timer-buttons">
+              <button id="timerToggle">▶</button>
               <button id="timerReset">↺</button>
             </div>
           </div>
         </div>
+        <div id="readinessPanel" class="readiness-panel"></div>
         <div class="button-row">
-          <button id="saveWorkout" class="primary">Enregistrer</button>
-          <button id="cancelWorkout" class="danger">Annuler</button>
+          <button id="finishWorkout" class="primary">Terminer</button>
+          <button id="cancelWorkout" class="danger ghost">Annuler</button>
         </div>
       </article>
 
       <div id="activeExercises" class="exercise-stack"></div>
 
       <article class="card">
-        <h2>Ajouter pendant la séance</h2>
-        <p class="muted">Utile si une machine est prise, si tu changes d'envie ou si tu fais un bonus.</p>
+        <h2>Ajouter un exercice</h2>
+        <p class="muted">Pratique si une machine est prise ou si tu veux ajouter un bonus.</p>
         <div class="inline-form">
           <select id="addGroup"></select>
           <select id="addExercise"></select>
-          <button id="addExerciseBtn" class="primary">Ajouter</button>
+          <button id="addExercise" class="primary">Ajouter</button>
         </div>
       </article>
     </section>
 
-    <section id="templates" class="page">
+    <section id="library" class="page">
       <article class="card">
-        <div class="section-title">
-          <div>
-            <h2>Bibliothèque de séances</h2>
-            <p class="muted">Séances maison courtes et séances salle plus complètes.</p>
-          </div>
-        </div>
+        <h2>Choisir une séance</h2>
+        <p class="muted">Pas de lundi/mercredi imposé. Tu choisis ce qui colle à ta journée.</p>
         <div class="segmented">
           <button class="segment active" data-template-filter="all">Toutes</button>
           <button class="segment" data-template-filter="home">Maison</button>
           <button class="segment" data-template-filter="gym">Salle</button>
+          <button class="segment" data-template-filter="push">Push</button>
+          <button class="segment" data-template-filter="pull">Pull</button>
+          <button class="segment" data-template-filter="legs">Jambes</button>
         </div>
         <div id="templateList" class="template-list"></div>
       </article>
@@ -116,20 +122,15 @@
     <section id="tracking" class="page">
       <section class="grid two">
         <article class="card">
-          <h2>Records discrets</h2>
-          <p class="muted">Affichés aussi pendant la séance pour te donner un repère.</p>
-          <div id="recordsList" class="records-list"></div>
-        </article>
-
-        <article class="card">
-          <h2>Filtres graphiques</h2>
-          <label>Donnée à afficher
+          <h2>Filtres utiles</h2>
+          <label>Donnée
             <select id="metricFilter">
               <option value="bestWeight">Meilleur poids</option>
               <option value="maxReps">Max répétitions</option>
-              <option value="volume">Volume estimé kg x reps</option>
+              <option value="volume">Volume kg x reps</option>
               <option value="sets">Nombre de séries</option>
               <option value="avgRpe">RPE moyen</option>
+              <option value="pain">Douleur moyenne</option>
             </select>
           </label>
           <label>Exercice
@@ -138,8 +139,8 @@
           <label>Lieu
             <select id="placeFilter">
               <option value="all">Maison + salle</option>
-              <option value="home">Maison seulement</option>
-              <option value="gym">Salle seulement</option>
+              <option value="home">Maison</option>
+              <option value="gym">Salle</option>
             </select>
           </label>
           <label>Période
@@ -151,29 +152,62 @@
             </select>
           </label>
         </article>
+
+        <article class="card">
+          <h2>Records discrets</h2>
+          <p class="muted">Les records apparaissent aussi pendant la séance pour guider sans pression.</p>
+          <div id="recordsList" class="records-list"></div>
+        </article>
       </section>
 
       <article class="card">
         <h2>Progression filtrée</h2>
         <p id="chartHint" class="muted"></p>
-        <canvas id="progressChart" height="150"></canvas>
+        <canvas id="progressCanvas" height="190"></canvas>
       </article>
 
       <article class="card">
-        <h2>Volume par groupe musculaire</h2>
-        <p class="muted">Filtré par période et lieu. Le volume est une estimation : poids x répétitions.</p>
-        <canvas id="volumeChart" height="150"></canvas>
-      </article>
-
-      <article class="card">
-        <div class="section-title">
-          <div>
-            <h2>Historique</h2>
-            <p class="muted">Chronologique, avec maison/salle et détail des séries.</p>
-          </div>
-          <button id="exportCsv" class="primary compact">Exporter CSV</button>
+        <h2>Historique</h2>
+        <div class="button-row">
+          <button id="exportCsv" class="primary small">Exporter CSV</button>
+          <button id="exportJson" class="small">Sauvegarde JSON</button>
         </div>
         <div id="historyList" class="history-list"></div>
+      </article>
+    </section>
+
+    <section id="nutrition" class="page">
+      <article class="card hero">
+        <p class="eyebrow">Prise de masse</p>
+        <h2>Que manger après la séance ?</h2>
+        <p class="muted">Des conseils simples, non médicaux, adaptés au type de séance et à l'heure. Objectif : récupérer, progresser, ne pas sous-manger.</p>
+      </article>
+
+      <section class="grid two">
+        <article class="card">
+          <h2>Calculateur protéines</h2>
+          <p class="muted">Pour la prise de masse, une cible simple est souvent autour de 1,6 à 2,0 g/kg/jour.</p>
+          <label>Ton poids actuel, en kg
+            <input id="bodyWeight" type="number" min="30" step="0.5" inputmode="decimal" placeholder="ex. 68" />
+          </label>
+          <button id="saveWeight" class="primary">Calculer</button>
+          <p id="proteinResult" class="big-line"></p>
+        </article>
+
+        <article class="card">
+          <h2>Après la séance</h2>
+          <div id="postWorkoutAdvice" class="advice-list"></div>
+        </article>
+      </section>
+
+      <article class="card">
+        <h2>Idées de repas simples</h2>
+        <div class="meal-grid">
+          <div class="meal"><strong>Repas solide</strong><span>Poulet ou œufs + riz/pâtes/pommes de terre + légumes + huile d'olive.</span></div>
+          <div class="meal"><strong>Collation rapide</strong><span>Skyr/fromage blanc + banane + flocons d'avoine + miel.</span></div>
+          <div class="meal"><strong>Soir tardif</strong><span>Yaourt grec ou fromage blanc + fruit. Digeste, pas trop lourd.</span></div>
+          <div class="meal"><strong>Après jambes/salle</strong><span>Vrai repas avec protéines + glucides. Évite de finir la journée trop bas en calories.</span></div>
+        </div>
       </article>
     </section>
 
@@ -181,27 +215,25 @@
       <article class="card hero">
         <p class="eyebrow">Défi en cours</p>
         <h2 id="challengeTitle">—</h2>
-        <p id="challengeDescription" class="muted"></p>
-        <div class="progress"><span id="challengeProgress"></span></div>
-        <p id="challengeStatus" class="big-line"></p>
+        <p id="challengeDesc" class="muted"></p>
+        <div class="progress"><span id="challengeBar"></span></div>
+        <p id="challengeProgressText" class="big-line"></p>
         <div class="button-row">
-          <button id="randomChallenge" class="primary">Nouveau défi aléatoire</button>
-          <button id="finishChallenge">Marquer terminé</button>
+          <button id="randomChallenge" class="primary">Défi aléatoire</button>
+          <button id="finishChallenge" class="ghost">Terminer</button>
         </div>
       </article>
-
       <article class="card">
-        <h2>Choisir un défi</h2>
-        <p class="muted">Plus de choix : maison, salle, volume, régularité, technique.</p>
+        <h2>Plus de défis</h2>
         <div id="challengeList" class="challenge-list"></div>
       </article>
     </section>
 
-    <section id="injury" class="page">
+    <section id="safety" class="page">
       <article class="card">
-        <h2>Mode Blessure / Prudence</h2>
-        <p class="warning">Ce mode n'est pas un avis médical. Il propose des alternatives souvent plus prudentes. Si la douleur augmente, stop.</p>
-        <label>Zone à ménager
+        <h2>Douleur / prudence</h2>
+        <p class="warning">Ce n'est pas un avis médical. Si une douleur augmente, arrête l'exercice et adapte la séance.</p>
+        <label>Zone à ménager actuellement
           <select id="injurySelect">
             <option value="none">Aucune</option>
             <option value="shoulders">Épaules</option>
@@ -215,31 +247,50 @@
 
     <section id="settings" class="page">
       <article class="card">
-        <h2>Sauvegarde</h2>
-        <p class="muted">Le navigateur stocke tes données localement. Fais une sauvegarde JSON de temps en temps.</p>
+        <h2>Sauvegarde des données</h2>
+        <p class="muted">Tes données restent sur ton appareil. La sauvegarde JSON est la copie de sécurité à garder dans iCloud Drive, Fichiers ou ton Mac.</p>
         <div class="button-row">
-          <button id="exportJson" class="primary">Sauvegarder JSON</button>
-          <label class="file-button">Restaurer JSON <input id="importJson" type="file" accept="application/json" /></label>
+          <button id="backupJson" class="primary">Télécharger sauvegarde JSON</button>
+          <label class="file-button">Restaurer JSON<input id="restoreJson" type="file" accept="application/json" hidden /></label>
         </div>
+        <p class="warning">Important : Safari/Chrome peuvent supprimer les données si tu vides l'historique ou les données de site. Sauvegarde régulièrement.</p>
       </article>
+
       <article class="card">
-        <h2>Minuteur</h2>
-        <label>Repos par défaut en secondes
-          <input id="restSeconds" type="number" min="20" max="300" step="5" />
-        </label>
+        <h2>Installation iPhone</h2>
+        <ol class="steps">
+          <li>Ouvre l'app dans Safari.</li>
+          <li>Touche le bouton de partage.</li>
+          <li>Choisis “Sur l'écran d'accueil”.</li>
+          <li>Lance-la ensuite comme une vraie app.</li>
+        </ol>
       </article>
-      <article class="card">
-        <h2>Calculateur protéines</h2>
-        <div class="inline-form">
-          <input id="bodyWeight" type="number" inputmode="decimal" placeholder="Poids en kg" />
-          <button id="proteinBtn" class="primary">Calculer</button>
-        </div>
-        <p id="proteinResult" class="big-line"></p>
+
+      <article class="card danger-zone">
+        <h2>Zone sensible</h2>
+        <button id="resetAll" class="danger">Tout réinitialiser</button>
       </article>
     </section>
   </main>
 
-  <div id="toast" class="toast"></div>
+  <div id="finishModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">Fin de séance</p>
+          <h2>Ton bilan</h2>
+        </div>
+        <button id="closeModal" class="icon-btn">✕</button>
+      </div>
+      <div id="finishSummary"></div>
+      <div class="button-row">
+        <button id="saveFinishedWorkout" class="primary">Enregistrer la séance</button>
+        <button id="returnWorkout" class="ghost">Retour séance</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
   <script src="script.js"></script>
 </body>
 </html>

@@ -1,24 +1,25 @@
-MON COACH SPORTIF V3
+MON COACH SPORTIF V4
 
-Pour tester sans GitHub :
-1. Dézippe le dossier.
-2. Ouvre index.html avec Safari ou Chrome.
+Objectif : prise de masse, usage iPhone, séances maison/salle, sauvegarde locale.
 
-Ce que contient la V3 :
-- Distinction Maison / Salle.
-- Séances maison de 20 à 30 minutes.
-- Séances salle d'environ 1 heure.
-- Séances libres : aucun jour imposé.
-- Séries multiples par exercice.
-- Boutons +1 / -1 répétition.
-- Suppression d'une série.
-- Records discrets pendant la séance.
-- Plus de défis.
-- Graphiques avec filtres : donnée, exercice, lieu, période.
-- Export CSV.
-- Sauvegarde / restauration JSON.
+Utilisation simple sur Mac :
+1. Ouvrir index.html dans Safari ou Chrome.
+2. Choisir une séance.
+3. Remplir les séries.
+4. Cliquer sur Terminer puis Enregistrer.
 
-Important :
-- Les données sont stockées dans le navigateur avec localStorage.
-- Le fichier JSON sert à sauvegarder toute l'app.
-- Les graphiques utilisent Chart.js via Internet. Pour un mode 100% hors ligne, il faudra intégrer Chart.js localement.
+Installation iPhone :
+1. Héberger l'app ou l'ouvrir via un lien.
+2. Dans Safari, bouton Partage.
+3. Choisir Sur l'écran d'accueil.
+
+Sauvegarde :
+- Les données sont stockées dans le navigateur via localStorage.
+- Utiliser régulièrement le bouton Télécharger sauvegarde JSON.
+- Le CSV sert à lire l'historique dans Excel.
+- Le JSON sert à restaurer toute l'application.
+
+Hors ligne :
+- Cette V4 n'utilise plus Chart.js en ligne.
+- Les graphiques sont dessinés directement par l'app.
+- Le service worker permet un usage hors ligne après une première ouverture via un hébergement HTTPS comme GitHub Pages.
