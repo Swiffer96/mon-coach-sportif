@@ -3,25 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#07111f" />
+  <meta name="theme-color" content="#1A1A1A" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Coach Mass" />
+  <meta name="apple-mobile-web-app-title" content="Mon Coach Sportif" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
-  <title>Coach Mass V6.1</title>
+  <title>Mon Coach Sportif V7</title>
 </head>
 <body>
   <header class="topbar safe-top">
     <div>
-      <p class="eyebrow">V6.1 · iPhone · salle</p>
-      <h1>Coach Mass</h1>
+      <p class="eyebrow">V7 · Optimisé iPhone</p>
+      <h1>Mon Coach Sportif</h1>
     </div>
     <button id="resumeBtn" class="mini primary hidden">Reprendre</button>
   </header>
 
   <main>
-    <section id="training" class="page active">
+    <!-- NOUVEAU : ÉCRAN D'ACCUEIL AVEC RÉSUMÉ -->
+    <section id="home" class="page active">
+      <article class="home-summary">
+        <div class="last-session-card card">
+          <p class="eyebrow">🏋️ Dernière séance</p>
+          <h2 id="lastSessionTitle">Aucune séance enregistrée</h2>
+          <p id="lastSessionDetails" class="muted">Commence une séance pour voir tes progrès ici.</p>
+        </div>
+        
+        <div class="next-session-card card">
+          <p class="eyebrow">🔥 Prochaine séance</p>
+          <h2 id="nextSessionTitle">Choisis une séance</h2>
+          <p id="nextSessionDetails" class="muted">Va dans "Entraînement" pour sélectionner une séance.</p>
+        </div>
+        
+        <button id="quickStartBtn" class="quick-launch-btn">LANCER UNE SÉANCE</button>
+      </article>
+      
+      <article class="card compact">
+        <p class="eyebrow">📊 Statistiques rapides</p>
+        <div class="stats-row">
+          <div><strong id="homeTotalSessions">0</strong><span>séances</span></div>
+          <div><strong id="homeWeekSets">0</strong><span>séries cette semaine</span></div>
+          <div><strong id="homeWeekVolume">0</strong><span>volume cette semaine</span></div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ANCIENNE SECTION "TRAINING" (renommée en "templates") -->
+    <section id="training" class="page">
       <article class="hero card compact">
         <div>
           <p class="eyebrow">Entraînement</p>
@@ -230,9 +262,10 @@
   </main>
 
   <nav class="bottom-nav safe-bottom" aria-label="Navigation">
-    <button class="nav-btn active" data-page="training">🏋️<span>Entraînement</span></button>
-    <button class="nav-btn" data-page="session">⏱️<span>Séance</span></button>
-    <button class="nav-btn" data-page="progress">📈<span>Progression</span></button>
+    <button class="nav-btn active" data-page="home">🏠<span>Accueil</span></button>
+    <button class="nav-btn" data-page="training">🏋️<span>Entraînement</span></button>
+    <button class="nav-btn" data-page="session">📝<span>Séance</span></button>
+    <button class="nav-btn" data-page="progress">📊<span>Progression</span></button>
     <button class="nav-btn" data-page="more">⚙️<span>Plus</span></button>
   </nav>
 
