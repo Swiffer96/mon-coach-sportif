@@ -1,9 +1,8 @@
 {
-  "name": "Coach Mass",
-  "short_name": "Coach Mass",
+  "name": "Coach Mass V6.1",
+  "short_name": "CoachMass",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#07111f",
-  "theme_color": "#07111f",
-  "icons": []
+  "theme_color": "#07111f"
 }

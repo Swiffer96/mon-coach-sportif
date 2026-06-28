@@ -9,12 +9,12 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="style.css" />
-  <title>Coach Mass V5</title>
+  <title>Coach Mass V6.1</title>
 </head>
 <body>
   <header class="topbar safe-top">
     <div>
-      <p class="eyebrow">V5 · iPhone · prise de masse</p>
+      <p class="eyebrow">V6.1 · iPhone · salle</p>
       <h1>Coach Mass</h1>
     </div>
     <button id="resumeBtn" class="mini primary hidden">Reprendre</button>
@@ -167,6 +167,50 @@
           <button id="exportJsonBtn">Sauvegarde JSON</button>
           <label class="file-btn">Restaurer JSON<input id="importJsonInput" type="file" accept="application/json" /></label>
           <button id="clearDataBtn" class="danger">Réinitialiser</button>
+        </div>
+      </article>
+    </section>
+
+
+    <section id="templatePreviewModal" class="modal hidden" aria-live="polite">
+      <article class="modal-card card preview-card">
+        <div class="section-row">
+          <div>
+            <p class="eyebrow">Aperçu séance</p>
+            <h2 id="previewTitle">Séance</h2>
+            <p id="previewMeta" class="muted"></p>
+          </div>
+          <button id="closePreviewBtn" class="mini">Fermer</button>
+        </div>
+        <div id="previewContent" class="preview-content"></div>
+        <button id="previewStartBtn" class="primary full">Lancer cette séance</button>
+      </article>
+    </section>
+
+    <section id="exercisePickerModal" class="modal hidden" aria-live="polite">
+      <article class="modal-card card picker-card">
+        <div class="section-row">
+          <div>
+            <p class="eyebrow">Bibliothèque</p>
+            <h2 id="pickerTitle">Ajouter exercice</h2>
+          </div>
+          <button id="closePickerBtn" class="mini">Fermer</button>
+        </div>
+        <div id="pickerCategories" class="picker-cats"></div>
+        <div id="pickerList" class="picker-list"></div>
+        <div class="new-exercise-box">
+          <h3>Créer une machine / exercice</h3>
+          <p class="muted">L’app le gardera en mémoire avec tes performances.</p>
+          <input id="newExerciseName" type="text" placeholder="ex. Hack Squat Panatta" />
+          <select id="newExerciseCategory">
+            <option value="legs">Jambes</option>
+            <option value="push">Push</option>
+            <option value="pull">Pull</option>
+            <option value="abs">Abdos / gainage</option>
+            <option value="shoulders">Épaules</option>
+            <option value="warmup">Échauffement</option>
+          </select>
+          <button id="createExerciseBtn" class="primary full">Créer et ajouter à la liste</button>
         </div>
       </article>
     </section>
