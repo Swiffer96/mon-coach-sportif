@@ -555,7 +555,42 @@ function drawProgressChart(){
     return { label: formatDate(s.startedAt), value };
   }).filter(p => p.value > 0).slice(-8);
   ctx.fillStyle = '#9fb1ca'; ctx.font = '12px -apple-system';
-  if(points.length < 2){ ctx.fillText('Pas encore assez de données pour ce filtre.', 16, 90); return; }
+
+  // --- NOUVEAU : Gestion des cas 0, 1, ou >=2 points ---
+  if (points.length === 0) {
+    ctx.fillText('Aucune séance enregistrée pour ce filtre.', 16, 90);
+    return;
+  }
+
+  if (points.length === 1) {
+    // Afficher un graphique en barres pour la dernière séance
+    const point = points[0];
+    const barWidth = 40;
+    const barHeight = Math.min((point.value / Math.max(1, point.value)) * (height - 40), height - 40);
+    const barX = width / 2 - barWidth / 2;
+    const barY = height - barHeight - 20;
+
+    // Dessiner la barre
+    ctx.fillStyle = '#7dd3fc';
+    ctx.fillRect(barX, barY, barWidth, barHeight);
+
+    // Afficher la valeur
+    let labelText = '';
+    if (metric === 'volume') labelText = `Volume: ${Math.round(point.value)} kg`;
+    else if (metric === 'sets') labelText = `Séries: ${Math.round(point.value)}`;
+    else if (metric === 'bestWeight') labelText = `Poids: ${Math.round(point.value)} kg`;
+    else if (metric === 'maxReps') labelText = `Répétitions: ${Math.round(point.value)}`;
+
+    ctx.fillStyle = '#a7f3d0';
+    ctx.fillText(labelText, barX - 10, barY - 5);
+
+    // Afficher la date
+    ctx.fillStyle = '#9fb1ca';
+    ctx.fillText(point.label, barX - 10, height - 10);
+    return;
+  }
+
+  // --- Cas normal (>=2 points) : Courbe de progression ---
   const max = Math.max(...points.map(p=>p.value)) || 1, min = Math.min(...points.map(p=>p.value)), pad = 24;
   ctx.strokeStyle = 'rgba(255,255,255,.12)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pad,12); ctx.lineTo(pad,height-pad); ctx.lineTo(width-8,height-pad); ctx.stroke();
   ctx.strokeStyle = '#7dd3fc'; ctx.lineWidth = 3; ctx.beginPath();
